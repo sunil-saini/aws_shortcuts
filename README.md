@@ -25,6 +25,7 @@ To get value of a ssm parameter
     
 All these commands are configurable in services_mapping.json
         
+First configure aws secret key and access key by aws configure command because same credentials will be used to query AWS resources
 
 To run the program first install the dependencies from requirements.txt
 
