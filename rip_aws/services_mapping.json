@@ -1,0 +1,14 @@
+{
+  "ec2": {
+    "alias_function": "ali", "file": "instances.txt"
+  },
+  "s3": {
+    "alias_function": "als", "file": "buckets.txt"
+  },
+  "lambdas": {
+    "alias_function": "all", "file": "lambdas.txt"
+  },
+  "ssm_parameters": {
+    "alias_function": "alp", "file": "ssm_parameters.txt", "get_param_value_alias_function": "agp"
+  }
+}
