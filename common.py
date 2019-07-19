@@ -14,7 +14,7 @@ def start_logging(default_path="logging.json", default_level=logging.INFO):
         with open(path, 'rt') as log_f:
             config = json.load(log_f)
             handler = config['handlers']
-            prefix_path = get_home_directory() + "./rip_aws/"
+            prefix_path = get_home_directory() + "/.rip_aws/"
 
             create_files_directory(prefix_path)
 
