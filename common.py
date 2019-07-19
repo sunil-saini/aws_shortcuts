@@ -84,7 +84,7 @@ def service_function_mapping(s):
 
 
 def run():
-
+    start_logging()
     logger.info("run is called, updating files...")
     user_home_directory = get_home_directory()
     path_to_store_ripped_files = user_home_directory + "/.rip_aws/"
