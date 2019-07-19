@@ -1,6 +1,6 @@
 from crontab import CronTab
 import logging.config
-from common import get_current_user, get_current_directory, run, start_logging
+from common import get_current_user, get_current_directory, create_files_directory, run, start_logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,5 +16,6 @@ def set_cron():
     logger.info("cron successfully written for user: %s" % username)
 
 
+create_files_directory(get_current_directory()+"/logs")
 run()
 set_cron()
