@@ -58,7 +58,7 @@ def create_get_ssm_alias_function_string(alias_name):
 
 
 def source_alias_functions(file_to_source):
-    profile_file = "/etc/profile"
+    profile_file = get_home_directory()+"/.bash_profile"
     line_to_append = "\n# added by rip_aws\n"+"source "+file_to_source+"\n"
 
     fp = open(profile_file)
