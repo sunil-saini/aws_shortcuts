@@ -19,7 +19,7 @@ To list all ssm parameters
 
         alp
         
-To get value a ssm parameter
+To get value of a ssm parameter
 
         agp parameter
     
