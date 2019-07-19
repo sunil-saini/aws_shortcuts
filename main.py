@@ -87,4 +87,3 @@ def run():
     ssm_function_string = create_get_ssm_alias_function_string(services["ssm_parameters"]["get_param_value_alias_function"])
     write_string_to_file(alias_functions_file, alias_functions_string+ssm_function_string)
     source_alias_functions(alias_functions_file)
-
