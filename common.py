@@ -7,15 +7,22 @@ import rip_aws
 logger = logging.getLogger(__name__)
 
 
-def start_logging(default_path="logging.json", default_level=logging.INFO, env_key='LOG_CFG'):
+def start_logging(default_path="logging.json", default_level=logging.INFO):
 
     path = default_path
-    value = os.getenv(env_key, None)
-    if value:
-        path = value
     if os.path.exists(path):
         with open(path, 'rt') as log_f:
             config = json.load(log_f)
+            handler = config['handlers']
+            prefix_path = get_home_directory() + "./rip_aws/"
+
+            create_files_directory(prefix_path)
+
+            log_file_handlers = ['info_file_handler', 'debug_file_handler', 'error_file_handler']
+
+            for log_file_handler in log_file_handlers:
+                handler[log_file_handler]['filename'] = prefix_path + handler[log_file_handler]['filename']
+
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)

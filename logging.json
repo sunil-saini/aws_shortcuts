@@ -17,7 +17,7 @@
       "class": "logging.handlers.RotatingFileHandler",
       "level": "INFO",
       "formatter": "simple",
-      "filename": "~/.rip_aws/logs/info.log",
+      "filename": "info.log",
       "maxBytes": 134217728,
       "backupCount": 2,
       "encoding": "utf8"
@@ -26,7 +26,7 @@
       "class": "logging.handlers.RotatingFileHandler",
       "level": "DEBUG",
       "formatter": "simple",
-      "filename": "~/.rip_aws/logs/debug.log",
+      "filename": "debug.log",
       "maxBytes": 134217728,
       "backupCount": 2,
       "encoding": "utf8"
@@ -35,7 +35,7 @@
       "class": "logging.handlers.RotatingFileHandler",
       "level": "ERROR",
       "formatter": "simple",
-      "filename": "~/.rip_aws/logs/error.log",
+      "filename": "error.log",
       "maxBytes": 134217728,
       "backupCount": 2,
       "encoding": "utf8"
