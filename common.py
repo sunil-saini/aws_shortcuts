@@ -2,6 +2,7 @@ import os
 import json
 import logging.config
 from os.path import expanduser
+import platform
 import rip_aws
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,10 @@ def start_logging(default_path="logging.json", default_level=logging.INFO):
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
+
+
+def get_os():
+    return platform.system()
 
 
 def get_current_directory():
@@ -65,17 +70,23 @@ def create_get_ssm_alias_function_string(alias_name):
 
 
 def source_alias_functions(file_to_source):
-    profile_file = get_home_directory()+"/.bash_profile"
+    os_name = get_os()
+    profile_file = ".bashrc"
+    if os_name == "Darwin":
+        profile_file = ".bash_profile"
+
+    profile_file_path = get_home_directory() + "/" + profile_file
+
     line_to_append = "\n# added by rip_aws\n"+"source "+file_to_source+"\n"
 
-    fp = open(profile_file)
+    fp = open(profile_file_path)
     file_content = fp.read()
 
     if line_to_append not in file_content:
-        fp = open(profile_file, 'a+')
+        fp = open(profile_file_path, 'a+')
         fp.write(line_to_append)
         fp.close()
-        logger.info("file %s updated successfully" % profile_file)
+        logger.info("file %s updated successfully" % profile_file_path)
 
 
 def service_function_mapping(s):
