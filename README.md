@@ -29,11 +29,11 @@ First configure aws secret key and access key by aws configure command because s
 
 To run the program first install the dependencies from requirements.txt
 
-    pip install -r requirements.txt
+    pip install -r requirements.txt --user
     
 
 To Run the program and set the cron
     
-    python set_cron.py
+    python main.py
     
 Finally open a terminal to run all above mentioned commands 
