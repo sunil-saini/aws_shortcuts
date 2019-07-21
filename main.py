@@ -11,7 +11,7 @@ def set_cron():
     cron = CronTab(user=username)
     command = "/bin/bash " + get_current_directory() + "/cron.sh " + get_current_directory()
     job = cron.new(command=command)
-    job.hours.every(2)
+    job.every(2).hours()
     cron.write()
     logger.info("cron successfully written for user: %s" % username)
 
