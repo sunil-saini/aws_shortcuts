@@ -46,6 +46,11 @@ def get_home_directory():
     return expanduser("~")
 
 
+def get_current_shell():
+    shell = os.environ['SHELL']
+    return shell
+
+
 def create_files_directory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -72,9 +77,12 @@ def create_get_ssm_alias_function_string(alias_name):
 
 def source_alias_functions(file_to_source):
     os_name = get_os()
-    profile_file = ".bashrc"
+    shell = get_current_shell()
+
     if os_name == "Darwin":
         profile_file = ".bash_profile"
+    else:
+        profile_file = "."+shell.split("/")[-1]+"rc"
 
     profile_file_path = get_home_directory() + "/" + profile_file
 
