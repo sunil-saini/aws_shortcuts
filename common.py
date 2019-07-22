@@ -1,6 +1,7 @@
 import os
 import json
 import logging.config
+import os.path
 from os.path import expanduser
 import platform
 import rip_aws
@@ -51,6 +52,10 @@ def get_current_shell():
     return shell
 
 
+def check_file_exists(file_path):
+    return os.path.isfile(file_path)
+
+
 def create_files_directory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -79,12 +84,14 @@ def source_alias_functions(file_to_source):
     os_name = get_os()
     shell = get_current_shell()
 
-    if os_name == "Darwin":
-        profile_file = ".bash_profile"
-    else:
-        profile_file = "."+shell.split("/")[-1]+"rc"
-
+    profile_file = "." + shell.split("/")[-1] + "rc"
     profile_file_path = get_home_directory() + "/" + profile_file
+
+    if not check_file_exists(profile_file_path):
+        if os_name == "Darwin":
+            profile_file_path = get_home_directory() + "/" + ".bash_profile"
+        else:
+            profile_file_path = get_home_directory() + "/" + ".bashrc"
 
     line_to_append = "\n# added by rip_aws\n"+"source "+file_to_source+"\n"
 
