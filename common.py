@@ -4,6 +4,7 @@ import logging.config
 from os.path import expanduser
 import platform
 import rip_aws
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +104,7 @@ def service_function_mapping(s):
 
 def run():
     start_logging()
+    print("running...")
     logger.info("run is called, updating files...")
     user_home_directory = get_home_directory()
     path_to_store_ripped_files = user_home_directory + "/.rip_aws/"
@@ -113,7 +115,7 @@ def run():
     with open('services_mapping.json') as mapping_file:
         services = json.load(mapping_file)
         mapping_file.close()
-        for service in services.keys():
+        for service in tqdm(services.keys()):
             service_data = service_function_mapping(service)
             path_to_store_service_data = path_to_store_ripped_files + services[service]['file']
             write_string_to_file(path_to_store_service_data, service_data)
