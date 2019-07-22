@@ -40,7 +40,7 @@ def get_current_directory():
 
 
 def get_current_user():
-    return os.getlogin()
+    return os.environ['USER']
 
 
 def get_home_directory():
