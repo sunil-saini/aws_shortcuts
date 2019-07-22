@@ -6,6 +6,4 @@ if [[ $# -eq 0 ]]
     exit
 fi
 cd $1
-[[ -d $1/logs/ ]] || mkdir $1/logs/
-
 python driver.py
