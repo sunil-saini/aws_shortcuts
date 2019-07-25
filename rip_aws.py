@@ -122,7 +122,10 @@ def hosted_zones():
             extra = []
             if rrs.get('ResourceRecords', None):
                 for record in rrs['ResourceRecords']:
-                    extra.append(record['Value'].split()[0])
+                    if record_type == "MX":
+                        extra.append(record['Value'].split()[-1])
+                    else:
+                        extra.append(record['Value'].split()[0])
 
             if rrs.get('AliasTarget', None):
                 extra.append(rrs['AliasTarget']['DNSName'])
