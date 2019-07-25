@@ -22,6 +22,10 @@ To list all ssm parameters
 To get value of a ssm parameter
 
         agp parameter
+        
+To get all route53 hosted zones and their resources with values
+
+        alhz
     
 All these commands are configurable in services_mapping.json
         
