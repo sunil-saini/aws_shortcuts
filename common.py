@@ -141,6 +141,6 @@ def run():
             alias_functions_string += alias_function_string
 
     alias_functions_file = path_to_store_ripped_files+".aliases"
-    ssm_function_string = create_get_ssm_alias_function_string(services["ssm_parameters"]["get_alias_function"])
+    ssm_function_string = create_get_ssm_alias_function_string(services["ssm_parameters"]["get_param_value_alias_function"])
     write_string_to_file(alias_functions_file, alias_functions_string+ssm_function_string)
     source_alias_functions(alias_functions_file)
