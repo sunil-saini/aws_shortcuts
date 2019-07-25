@@ -96,3 +96,38 @@ def get_ssm_parameter_value(parameter=None):
     response = client.get_parameters(Names=[parameter], WithDecryption=True)
     row = response['Parameters'][0]
     print(row['Value'])
+
+
+def hosted_zones():
+    client = boto3.client('route53')
+    response = client.list_hosted_zones()
+
+    all_hosted_zones = str()
+
+    for row in response['HostedZones']:
+        zone_id = row['Id']
+        zone_name = row['Name']
+        zone_type = None
+        if row['Config']['PrivateZone']:
+            zone_type = "Private"
+        else:
+            zone_type = "Public"
+
+        rrs_response = client.list_resource_record_sets(HostedZoneId=zone_id)
+
+        for rrs in rrs_response['ResourceRecordSets']:
+            record_name = rrs['Name']
+            record_type = rrs['Type']
+
+            extra = []
+            if rrs.get('ResourceRecords', None):
+                for record in rrs['ResourceRecords']:
+                    extra.append(record['Value'].split()[0])
+
+            if rrs.get('AliasTarget', None):
+                extra.append(rrs['AliasTarget']['DNSName'])
+
+            to_append = [zone_name, zone_type, record_name, record_type]+extra
+            all_hosted_zones += '\t'.join(to_append)+"\n"
+
+    return all_hosted_zones

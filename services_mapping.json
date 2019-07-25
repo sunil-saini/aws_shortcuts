@@ -10,5 +10,8 @@
   },
   "ssm_parameters": {
     "alias_function": "alp", "file": "ssm_parameters.txt", "get_param_value_alias_function": "agp"
+  },
+  "route53": {
+    "alias_function": "alhz", "file": "hosted_zones.txt"
   }
 }
