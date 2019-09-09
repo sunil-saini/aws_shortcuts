@@ -1,4 +1,4 @@
-# rip_aws
+# aws_shortcuts
 Shorthand personalized commands to work faster on AWS
 
 e.g. - 
