@@ -4,7 +4,7 @@ import logging.config
 import os.path
 from os.path import expanduser
 import platform
-import rip_aws
+import aws
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
@@ -108,11 +108,11 @@ def source_alias_functions(file_to_source):
 def service_function_mapping(s):
 
     mapping = {
-        "ec2": rip_aws.ec2(),
-        "s3": rip_aws.s3(),
-        "lambdas": rip_aws.lambdas(),
-        "ssm_parameters": rip_aws.ssm_parameters(),
-        "route53": rip_aws.hosted_zones()
+        "ec2": aws.ec2(),
+        "s3": aws.s3(),
+        "lambdas": aws.lambdas(),
+        "ssm_parameters": aws.ssm_parameters(),
+        "route53": aws.hosted_zones()
     }
 
     return mapping[s]
