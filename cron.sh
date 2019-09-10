@@ -2,7 +2,7 @@
 
 if [[ $# -eq 0 ]]
   then
-    echo "rip_aws project directory parameter not given"
+    echo "aws_shortcuts project directory parameter not given"
     exit
 fi
 cd $1

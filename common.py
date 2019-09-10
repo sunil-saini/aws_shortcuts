@@ -17,7 +17,7 @@ def start_logging(default_path="logging.json", default_level=logging.INFO):
         with open(path, 'rt') as log_f:
             config = json.load(log_f)
             handler = config['handlers']
-            prefix_path = get_home_directory() + "/.rip_aws/logs/"
+            prefix_path = get_home_directory() + "/aws_shortcuts/logs/"
 
             create_files_directory(prefix_path)
 
@@ -93,7 +93,7 @@ def source_alias_functions(file_to_source):
         else:
             profile_file_path = get_home_directory() + "/" + ".bashrc"
 
-    line_to_append = "\n# added by rip_aws\n"+"source "+file_to_source+"\n"
+    line_to_append = "\n# added by aws_shortcuts\n"+"source "+file_to_source+"\n"
 
     fp = open(profile_file_path)
     file_content = fp.read()
@@ -123,7 +123,7 @@ def run():
     print("running...")
     logger.info("run is called, updating files...")
     user_home_directory = get_home_directory()
-    path_to_store_ripped_files = user_home_directory + "/.rip_aws/"
+    path_to_store_ripped_files = user_home_directory + "/.aws_shortcuts/"
     create_files_directory(path_to_store_ripped_files)
 
     alias_functions_string = str()
