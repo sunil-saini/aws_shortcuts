@@ -17,7 +17,7 @@ def start_logging(default_path="logging.json", default_level=logging.INFO):
         with open(path, 'rt') as log_f:
             config = json.load(log_f)
             handler = config['handlers']
-            prefix_path = get_home_directory() + "/aws_shortcuts/logs/"
+            prefix_path = get_home_directory() + "/.aws_shortcuts/logs/"
 
             create_files_directory(prefix_path)
 
