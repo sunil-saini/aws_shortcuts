@@ -33,8 +33,8 @@ Steps to run the project -
         
 1. First configure aws secret key and access key by aws configure command because same credentials will be used to query AWS resources
 
-2. Clone the repository and run the set_aws_shortcuts.sh shell script from the inside the repository
+2. Run the following command
+
+        curl https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/set_aws_shortcuts.sh | bash +x
     
-    bash +x set_aws_shortcuts.sh
-    
-Finally open a terminal to enjoy all above mentioned commands 
+Open terminal and enjoy all above mentioned commands 
