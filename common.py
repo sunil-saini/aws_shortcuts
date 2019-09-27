@@ -44,6 +44,12 @@ def get_alias_function(alias_name, file_path):
     return function
 
 
+def get_ssm_alias_function(alias_name):
+    host = collect_all_required_data()
+    function = alias_name + "() {\n" + "if [ ! -z \"$1\" ]\nthen\n" + "python "+host['project']+"/get_ssm_parameter.py \"$1\"\nfi" + "\n}\n\n"
+    return function
+
+
 def service_function_mapping(s):
     mapping = {
         "ec2": aws.ec2,

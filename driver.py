@@ -3,7 +3,7 @@ import threading
 import logging.config
 from configparser import RawConfigParser
 from about_host import collect_all_required_data
-from common import write_string_to_file, get_alias_function, service_function_mapping, source_alias_functions, start_logging
+from common import write_string_to_file, get_alias_function, get_ssm_alias_function, service_function_mapping, source_alias_functions, start_logging
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ for service in parser.sections():
     alias_function = get_alias_function(function_name, store_file)
     aliases += alias_function
 
+aliases += get_ssm_alias_function(parser['ssm_parameters'].get('get_command'))
 logger.info("Alias Functions: %s" % aliases)
 
 alias_file = host['aliases']

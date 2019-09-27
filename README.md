@@ -37,4 +37,4 @@ Steps to run the project -
 
         curl https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/set_aws_shortcuts.sh | bash +x
     
-Open terminal and enjoy all above mentioned commands 
+Open new terminal tab and enjoy all above mentioned commands
