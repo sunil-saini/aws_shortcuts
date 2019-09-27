@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-if [[ $# -eq 0 ]]
-  then
-    echo "aws_shortcuts project directory parameter not given"
-    exit
-fi
 cd $1
+git pull origin master
 python driver.py
