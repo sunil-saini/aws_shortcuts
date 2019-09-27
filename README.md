@@ -1,5 +1,5 @@
 # aws_shortcuts
-Shorthand personalized commands to work faster on AWS
+Shorthand configurable personalized commands to work faster on AWS locally
 
 e.g. - 
 
@@ -25,19 +25,16 @@ To get value of a ssm parameter
         
 To get all route53 hosted zones and their resources with values
 
-        alhz
+        alz
     
-All these commands are configurable in services_mapping.json
+All these commands are configurable in commands.properties file
+
+Steps to run the project - 
         
-First configure aws secret key and access key by aws configure command because same credentials will be used to query AWS resources
+1. First configure aws secret key and access key by aws configure command because same credentials will be used to query AWS resources
 
-To run the program first install the dependencies from requirements.txt
-
-    pip install -r requirements.txt --user
+2. Clone the repository and run the set_aws_shortcuts.sh shell script from the inside the repository
     
-
-To Run the program and set the cron
+    bash +x set_aws_shortcuts.sh
     
-    python main.py
-    
-Finally open a terminal to run all above mentioned commands 
+Finally open a terminal to enjoy all above mentioned commands 
