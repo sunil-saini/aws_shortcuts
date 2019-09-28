@@ -15,7 +15,7 @@ cd "$project"
 cron="$HOME/.$project/$project/cron.sh"
 
 chmod +x "$cron"
-
+echo "Installing pip dependencies..."
 pip install -q -r requirements.txt --user
 
 echo "Started collecting data from AWS, it may take few minutes..."
