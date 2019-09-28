@@ -30,6 +30,6 @@ def collect_all_required_data():
     data['shell'] = get_current_shell()
     data['store'] = data['home'] + "/."+project+"/"
     data['aliases'] = data['store'] + ".aliases"
-    data['project'] = data['store'] + "aws_shortcuts"
+    data['project'] = data['store'] + project
 
     return data
