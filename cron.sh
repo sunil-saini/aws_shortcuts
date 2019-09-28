@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
-cd $1
-git pull origin master
+project="aws_shortcuts"
+
+cd "$HOME/.$project/$project"
+
+git pull --quiet origin master >/dev/null
+
 python driver.py
