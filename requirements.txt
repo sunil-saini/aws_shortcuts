@@ -1,3 +1,2 @@
 boto3==1.9.183
-python-crontab==2.3.8
 configparser==4.0.2
