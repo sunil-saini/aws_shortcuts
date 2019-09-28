@@ -16,7 +16,7 @@ cron="$HOME/.$project/$project/cron.sh"
 
 chmod +x "$cron"
 echo "Installing pip dependencies..."
-python -m pip install -q -r requirements.txt --user
+python -m pip install --ignore-installed -q -r requirements.txt --user
 
 echo "Started collecting data from AWS, it may take few minutes..."
 python driver.py
