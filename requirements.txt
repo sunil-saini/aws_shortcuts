@@ -1,2 +1,2 @@
 boto3==1.9.183
-configparser==4.0.2
+configparser==3.5.0
