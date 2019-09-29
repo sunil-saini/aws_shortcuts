@@ -32,11 +32,14 @@ logger.info("Collected Host Data: %s" % json.dumps(host))
 
 services_data = {}
 
+threads_list = []
 for sec in parser.sections():
     thread = threading.Thread(target=worker, args=(sec,))
+    threads_list.append(thread)
     thread.start()
-    thread.join()
 
+for thread in threads_list:
+    thread.join()
 
 aliases = str()
 for service in parser.sections():
