@@ -32,5 +32,6 @@ def collect_all_required_data():
     data['store'] = data['home'] + "/."+project+"/"
     data['aliases'] = data['store'] + ".aliases"
     data['project'] = data['store'] + project
+    data['cron'] = data['project'] + "/cron.sh"
 
     return data
