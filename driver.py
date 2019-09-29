@@ -3,14 +3,13 @@ import threading
 import logging.config
 from configparser import RawConfigParser
 from about_host import collect_all_required_data
-from common import write_string_to_file, get_alias_function, get_ssm_alias_function, service_function_mapping, source_alias_functions, start_logging
-
+import common as comm
 logger = logging.getLogger(__name__)
 
 
 def worker(service_for):
     logger.info("Service: %s, thread started collecting data" % service_for)
-    service_data = service_function_mapping(service_for)()
+    service_data = comm.service_function_mapping(service_for)()
     services_data[service_for] = service_data
     logger.info("Service: %s, thread done collecting data" % service_for)
 
@@ -20,7 +19,7 @@ def validate_config_properties():
     pass
 
 
-start_logging()
+comm.start_logging()
 logger.info("Started driver...")
 parser = RawConfigParser()
 parser.read("commands.properties")
@@ -34,26 +33,34 @@ services_data = {}
 
 threads_list = []
 for sec in parser.sections():
-    thread = threading.Thread(target=worker, args=(sec,))
-    threads_list.append(thread)
-    thread.start()
+
+    if sec != 'project':
+        thread = threading.Thread(target=worker, args=(sec,))
+        threads_list.append(thread)
+        thread.start()
 
 for thread in threads_list:
     thread.join()
 
 aliases = str()
 for service in parser.sections():
-    store_file = host['store'] + service + ".txt"
-    write_string_to_file(store_file, services_data[service])
-    function_name = parser[service].get('list_command')
-    alias_function = get_alias_function(function_name, store_file)
+
+    if service != 'project':
+        store_file = host['store'] + service + ".txt"
+        comm.write_string_to_file(store_file, services_data[service])
+        function_name = parser[service].get('list_command')
+        alias_function = comm.get_alias_function(function_name, store_file)
+    else:
+        update_function = parser[service].get('update_command')
+        alias_function = comm.get_update_data_alias_function(update_function)
+
     aliases += alias_function
 
-aliases += get_ssm_alias_function(parser['ssm_parameters'].get('get_command'))
+aliases += comm.get_ssm_alias_function(parser['ssm_parameters'].get('get_command'))
 logger.info("Alias Functions: %s" % aliases)
 
 alias_file = host['aliases']
-write_string_to_file(alias_file, aliases)
-source_alias_functions(alias_file)
+comm.write_string_to_file(alias_file, aliases)
+comm.source_alias_functions(alias_file)
 
 logger.info('driver done')
