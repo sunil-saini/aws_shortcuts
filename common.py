@@ -82,3 +82,9 @@ def source_alias_functions(file_to_source):
         fp.write(line_to_append)
         fp.close()
         logger.info("file %s updated successfully" % profile_file)
+
+
+def get_update_data_alias_function(alias_name):
+    host = collect_all_required_data()
+    function = alias_name + "() {\n" + host['cron'] + "\n}\n\n"
+    return function
