@@ -2,8 +2,7 @@ import os
 import json
 import logging.config
 import aws
-from about_host import collect_all_required_data
-
+from about_host import collect_all_required_data, project
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +72,7 @@ def source_alias_functions(file_to_source):
         else:
             profile_file = host['home'] + "/.bashrc"
 
-    line_to_append = "\n# added by aws_shortcuts\n"+"source "+file_to_source+"\n"
+    line_to_append = "\n# added by "+project+"\nsource "+file_to_source+"\n"
 
     fp = open(profile_file)
     file_content = fp.read()

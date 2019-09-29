@@ -3,6 +3,8 @@ import os
 import os.path
 from os.path import expanduser
 
+project = "aws_shortcuts"
+
 
 def get_os():
     return platform.system().lower()
@@ -22,7 +24,6 @@ def get_current_shell():
 
 
 def collect_all_required_data():
-    project = "aws_shortcuts"
     data = dict()
     data['os'] = get_os()
     data['user'] = get_current_user()
