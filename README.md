@@ -11,7 +11,7 @@ List all ec2 instances
         instance02	i-3b2e0ceb	10.10.110.62	56.12.36.95	t2.small	running
         instance03	i-ce62201c	10.10.110.54	56.21.41.14	t2.medium	running
         
-        grep for any pattern
+        For any specific pattern
         
         ali instance01
         
@@ -86,7 +86,7 @@ Steps to set the project -
 
 Connect to me for any feedback
 
-    email - sunilsaini314@gmail
+    email - sunilsaini314@gmail.com
     linkedin - www.linkedin.com/in/sunilsaini314
     
-Enjoy.
+Peace, Enjoy.
