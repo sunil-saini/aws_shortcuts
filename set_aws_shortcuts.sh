@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 project="aws_shortcuts"
-echo "Detected OS type - $OSTYPE"
+printf "\nDetected OS type - $OSTYPE\n"
 if ! [[ "$OSTYPE" == darwin* || "$OSTYPE" == "linux-gnu" ]]; then
     echo "Unsupported OS, exiting"
     exit 1
 fi
 
-echo "Started setting the project..."
+printf "Started setting the project..."
 
 mkdir -p "$HOME/.$project"
 mkdir -p "$HOME/.$project/logs"
@@ -24,10 +24,10 @@ fi
 cron="$HOME/.$project/$project/cron.sh"
 
 chmod +x "$cron"
-echo "Installing pip dependencies..."
+printf "Installing pip dependencies..."
 python -m pip install --ignore-installed -q -r requirements.txt --user
 
-echo "Started collecting data from AWS, it may take few minutes...\n"
+printf "\nStarted collecting data from AWS, it may take few minutes...\n"
 python driver.py
 
 crontab -l > current_cron
