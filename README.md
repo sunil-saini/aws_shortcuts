@@ -65,13 +65,6 @@ Get all route53 hosted DNS with their all records type
         example.com.	Private	v1.example.com.	A	10.10.74.4	10.10.74.5
         example.com.	Private	v2.example.com.	A	10.10.75.4	10.10.75.5
     
-Rename any command at any time
-
-        awss configure
-        
-List all configured commands at any time
-        
-        awss 
         
 All list commands support pattern(s), so just specify the pattern for specific result else all dataset will be returned
 
@@ -83,6 +76,17 @@ Steps to set the project -
 
         curl -s https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/set_aws_shortcuts.sh | bash +x
     
+3. Open new terminal tab and play with default set commands
+
+
+List all configured commands at any time
+        
+        awss 
+
+Rename any command at any time
+
+        awss configure
+        
 
 Connect to me for any feedback
 

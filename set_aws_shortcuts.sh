@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 project="aws_shortcuts"
-echo "Detected OS - $OSTYPE"
+echo "Detected OS type - $OSTYPE"
 if ! [[ "$OSTYPE" == darwin* || "$OSTYPE" == "linux-gnu" ]]; then
     echo "Unsupported OS, exiting"
     exit 1
@@ -42,4 +42,4 @@ else
 fi
 
 source "$HOME/.$project/.aliases"
-echo "Project set successfully, Enjoy the shortcut commands"
+echo "Project set successfully, Open new terminal tab and enjoy the shortcut commands"
