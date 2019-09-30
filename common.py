@@ -111,14 +111,16 @@ def configure_project_commands():
     properties_file = host['properties']
     read_parser.read(properties_file)
 
+    try:
+        input_method = raw_input
+    except NameError:
+        input_method = input
+
     for sec in read_parser.sections():
         write_parser.add_section(sec)
         for item in read_parser.items(sec):
-            try:
-                input_method = raw_input
-            except NameError:
-                input_method = input
             cmd = input_method(item[0]+" for " + sec + " [ Current - " + item[1] + " ]: ")
+            print(cmd)
             if cmd:
                 write_parser.set(sec, item[0], cmd)
             else:
@@ -134,7 +136,7 @@ def set_project_alias(alias_name):
     read_project_str = "python -c 'from common import read_project_current_commands; read_project_current_commands()'"
     configure_project_str = "python -c 'from common import configure_project_commands; configure_project_commands()'"
 
-    project_alias = "awss() {\n cd "+host['project']+'\n if [[ "$1" == "configure" ]];then\n  '+configure_project_str+"\n else\n  "+read_project_str+"\n fi\n}\n\n"
+    project_alias = "awss() {\n cd "+host['project']+'\n if [[ "$1" == "configure" ]];then\n  '+configure_project_str+"\n  python driver.py"+"\n else\n  "+read_project_str+"\n fi\n}\n\n"
 
     list_alias = alias_name+"() {\n cd " + host['project'] + "\n " + read_project_str + "\n}\n\n"
 
