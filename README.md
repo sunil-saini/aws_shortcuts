@@ -3,38 +3,90 @@ Shorthand configurable personalized commands to work faster on AWS locally
 
 e.g. - 
 
-To list all ec2 instances
+List all ec2 instances
 
         ali
         
-To list all s3 buckets
+        instance01	i-91d62f6f	10.10.110.245	56.13.52.19	t2.small	running
+        instance02	i-3b2e0ceb	10.10.110.62	56.12.36.95	t2.small	running
+        instance03	i-ce62201c	10.10.110.54	56.21.41.14	t2.medium	running
         
-        alb
+        grep for any pattern
         
-To list all lambdas
+        ali instance01
+        
+        instance01	i-91d62f6f	10.10.110.245	56.13.52.19	t2.small	running
+        
+        
+List all s3 buckets
+        
+        alb <any pattern>
+        
+        alb test1
+        
+        test1.test.bodies
+        test1.test.client-logs
+        test1.test.files
+        
+List all lambdas
 
-        all
+        all <any pattern>
         
-To list all ssm parameters
-
-        alp
+        all staging
         
-To get value of a ssm parameter
-
-        agp parameter
+        staging.example1
+        staging.example2
+        staging.example3
         
-To get all route53 hosted zones and their resources with values
+List all ssm parameters
 
-        alz
+        alp <any pattern>
+        
+        alp prod
+        
+        prod.db1.password
+        prod.db2.password
+        prod.db3.password
+        
+Get value of a particular ssm parameter
+
+        agp <parameter>
+        
+        agp prod.db1.password
+        
+        xYvd$%sgh#
+        
+Get all route53 hosted DNS with their all records type
+
+        alz <any pattern>
+        
+        alz example.com
+        
+        example.com.	Private	v1.example.com.	A	10.10.74.4	10.10.74.5
+        example.com.	Private	v2.example.com.	A	10.10.75.4	10.10.75.5
     
-All these commands are configurable in commands.properties file
+Rename any command at any time
 
-Steps to run the project - 
+        awss configure
         
-1. First configure aws secret key and access key by aws configure command because same credentials will be used to query AWS resources
+List all configured commands at any time
+        
+        awss 
+        
+All list commands support pattern(s), so just specify the pattern for specific result else all dataset will be returned
 
-2. Run the following command
+Steps to set the project - 
+        
+1. First configure aws secret key and access key by aws configure command as same credentials will be used to query AWS resources
+
+2. Run the following command to set project with default commands
 
         curl -s https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/set_aws_shortcuts.sh | bash +x
     
-Open new terminal tab and enjoy all above mentioned commands
+
+Connect to me for any feedback
+
+    email - sunilsaini314@gmail
+    linkedin - www.linkedin.com/in/sunilsaini314
+    
+Enjoy.
