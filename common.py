@@ -28,6 +28,12 @@ def start_logging(default_path="logging.json", default_level=logging.INFO):
         logging.basicConfig(level=default_level)
 
 
+def properties_config_parser():
+    parser = RawConfigParser()
+    parser.read("commands.properties")
+    return parser
+
+
 def check_file_exists(file_path):
     return os.path.isfile(file_path)
 
@@ -46,7 +52,8 @@ def get_alias_function(alias_name, file_path):
 
 def get_ssm_alias_function(alias_name):
     host = collect_all_required_data()
-    function = alias_name + "() {\n" + "if [ ! -z \"$1\" ]\nthen\n" + "python "+host['project']+"/get_ssm_parameter.py \"$1\"\nfi" + "\n}\n\n"
+    prj = host['project']
+    function = alias_name+"() {\n"+"if [ ! -z \"$1\" ]\nthen\n"+"python "+prj+"/get_ssm_parameter.py \"$1\"\nfi"+"\n}\n\n"
     return function
 
 
@@ -102,6 +109,8 @@ def read_project_current_commands():
         for item in read_parser.items(sec):
             print("Current "+item[0]+" for "+sec+" is - "+item[1])
 
+    print("\nTo configure commands - awss configure\n")
+
 
 def configure_project_commands():
     host = collect_all_required_data()
@@ -132,11 +141,42 @@ def configure_project_commands():
 def set_project_alias(alias_name):
     host = collect_all_required_data()
 
-    read_project_str = "python -c 'from common import read_project_current_commands; read_project_current_commands()'"
-    configure_project_str = "python -c 'from common import configure_project_commands; configure_project_commands()'"
+    rps = "python -c 'from common import read_project_current_commands as rpcc; rpcc()'"
+    cps = "python -c 'from common import configure_project_commands as cpc, create_alias_functions as caf;cpc(); caf()'"
+    prj = host['project']
+    project_alias = "awss() {\n cd "+prj+'\n if [[ "$1" == "configure" ]];then\n  '+cps+"\n else\n  "+rps+"\n fi\n}\n\n"
 
-    project_alias = "awss() {\n cd "+host['project']+'\n if [[ "$1" == "configure" ]];then\n  '+configure_project_str+"\n  echo updating...\n  python driver.py"+"\n else\n  "+read_project_str+"\n fi\n}\n\n"
-
-    list_alias = alias_name+"() {\n cd " + host['project'] + "\n " + read_project_str + "\n}\n\n"
+    list_alias = alias_name+"() {\n cd " + host['project'] + "\n " + rps + "\n}\n\n"
 
     return project_alias+list_alias
+
+
+def create_alias_functions():
+    log = "Creating alias functions..."
+    print(log)
+    logger.info(log)
+    parser = properties_config_parser()
+    host = collect_all_required_data()
+    aliases = str()
+    for service in parser.sections():
+        if service != 'project':
+            store_file = host['store'] + service + ".txt"
+            list_cmd = parser[service].get('list_command')
+            alias_function = get_alias_function(list_cmd, store_file)
+        else:
+            list_cmd = parser[service].get('list_command')
+            update_cmd = parser[service].get('update_command')
+
+            list_alias = set_project_alias(list_cmd)
+            update_alias = get_update_data_alias_function(update_cmd)
+
+            alias_function = list_alias + update_alias
+
+        aliases += alias_function
+
+    aliases += get_ssm_alias_function(parser['ssm_parameters'].get('get_command'))
+    logger.info("Alias Functions: %s" % aliases)
+
+    alias_file = host['aliases']
+    write_string_to_file(alias_file, aliases)
+    source_alias_functions(alias_file)
