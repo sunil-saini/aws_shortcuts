@@ -4,6 +4,7 @@ import logging.config
 from configparser import RawConfigParser
 from about_host import collect_all_required_data
 import common as comm
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,11 +49,16 @@ for service in parser.sections():
     if service != 'project':
         store_file = host['store'] + service + ".txt"
         comm.write_string_to_file(store_file, services_data[service])
-        function_name = parser[service].get('list_command')
-        alias_function = comm.get_alias_function(function_name, store_file)
+        list_cmd = parser[service].get('list_command')
+        alias_function = comm.get_alias_function(list_cmd, store_file)
     else:
-        update_function = parser[service].get('update_command')
-        alias_function = comm.get_update_data_alias_function(update_function)
+        list_cmd = parser[service].get('list_command')
+        update_cmd = parser[service].get('update_command')
+
+        list_alias = comm.set_project_alias(list_cmd)
+        update_alias = comm.get_update_data_alias_function(update_cmd)
+
+        alias_function = list_alias + update_alias
 
     aliases += alias_function
 

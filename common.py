@@ -2,6 +2,7 @@ import os
 import json
 import logging.config
 import aws
+from configparser import RawConfigParser
 from about_host import collect_all_required_data, project
 
 logger = logging.getLogger(__name__)
@@ -88,3 +89,53 @@ def get_update_data_alias_function(alias_name):
     host = collect_all_required_data()
     function = alias_name + "() {\n" + host['cron'] + "\n}\n\n"
     return function
+
+
+def read_project_current_commands():
+    host = collect_all_required_data()
+    read_parser = RawConfigParser()
+
+    properties_file = host['properties']
+    read_parser.read(properties_file)
+
+    for sec in read_parser.sections():
+        for item in read_parser.items(sec):
+            print("Current "+item[0]+" for "+sec+" is - "+item[1])
+
+
+def configure_project_commands():
+    host = collect_all_required_data()
+    read_parser = RawConfigParser()
+    write_parser = RawConfigParser()
+
+    properties_file = host['properties']
+    read_parser.read(properties_file)
+
+    for sec in read_parser.sections():
+        write_parser.add_section(sec)
+        for item in read_parser.items(sec):
+            try:
+                input_method = raw_input
+            except NameError:
+                input_method = input
+            cmd = input_method(item[0]+" for " + sec + " [ Current - " + item[1] + " ]: ")
+            if cmd:
+                write_parser.set(sec, item[0], cmd)
+            else:
+                write_parser.set(sec, item[0], item[1])
+
+    with open(properties_file, 'w') as configfile:
+        write_parser.write(configfile)
+
+
+def set_project_alias(alias_name):
+    host = collect_all_required_data()
+
+    read_project_str = "python -c 'from common import read_project_current_commands; read_project_current_commands()'"
+    configure_project_str = "python -c 'from common import configure_project_commands; configure_project_commands()'"
+
+    project_alias = "awss() {\n cd "+host['project']+'\n if [[ "$1" == "configure" ]];then\n  '+configure_project_str+"\n else\n  "+read_project_str+"\n fi\n}\n\n"
+
+    list_alias = alias_name+"() {\n cd " + host['project'] + "\n " + read_project_str + "\n}\n\n"
+
+    return project_alias+list_alias
