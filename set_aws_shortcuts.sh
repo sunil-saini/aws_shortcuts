@@ -27,9 +27,8 @@ chmod +x "$cron"
 echo "Installing pip dependencies..."
 python -m pip install --ignore-installed -q -r requirements.txt --user
 
-echo "Started collecting data from AWS, it may take few minutes..."
+echo "Started collecting data from AWS, it may take few minutes...\n"
 python driver.py
-echo "Data collected successfully"
 
 crontab -l > current_cron
 cron_line="0 */2 * * * /bin/bash $cron"
@@ -42,4 +41,5 @@ else
     echo "Cron set successfully to keep updating data from AWS periodically"
 fi
 
-echo "Project set successfully, open new terminal tab and enjoy the shortcut commands"
+source "$HOME/.$project/.aliases"
+echo "Project set successfully, Enjoy the shortcut commands"
