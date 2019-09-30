@@ -152,7 +152,7 @@ def set_project_alias(alias_name):
 
 
 def create_alias_functions():
-    log = "Creating alias functions..."
+    log = "\nCreating alias functions..."
     print(log)
     logger.info(log)
     parser = properties_config_parser()
