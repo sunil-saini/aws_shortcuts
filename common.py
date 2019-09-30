@@ -109,7 +109,7 @@ def read_project_current_commands():
         for item in read_parser.items(sec):
             print("Current "+item[0]+" for "+sec+" is - "+item[1])
 
-    print("\nTo configure commands - awss configure\n")
+    print("\nTo rename commands - awss configure\n")
 
 
 def configure_project_commands():
@@ -152,7 +152,7 @@ def set_project_alias(alias_name):
 
 
 def create_alias_functions():
-    log = "\nCreating alias functions..."
+    log = "\nCreating alias functions...\n"
     print(log)
     logger.info(log)
     parser = properties_config_parser()

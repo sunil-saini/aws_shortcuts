@@ -1,3 +1,4 @@
+import time
 import json
 import threading
 import logging.config
@@ -31,6 +32,7 @@ def start_service_threads():
             thread = threading.Thread(target=worker, args=(service,))
             threads_list.append(thread)
             thread.start()
+            time.sleep(1)
 
     for thread in threads_list:
         thread.join()
