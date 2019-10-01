@@ -134,3 +134,56 @@ def hosted_zones():
             all_hosted_zones += '\t'.join(to_append)+"\n"
 
     return all_hosted_zones
+
+
+def load_balancers():
+    elb_client = boto3.client('elb')
+    elbv2_client = boto3.client('elbv2')
+
+    elb_list = elb_client.describe_load_balancers()
+    elbv2_list = elbv2_client.describe_load_balancers()
+
+    all_lb_info = str()
+
+    for elb in elb_list['LoadBalancerDescriptions']:
+        listener_descriptions = elb['ListenerDescriptions']
+        instances_list = elb['Instances']
+        port_mapping = []
+        instances = []
+        for ld in listener_descriptions:
+            lb_port = str(ld['Listener']['LoadBalancerPort'])
+            instance_port = str(ld['Listener']['InstancePort'])
+            port_mapping.append(lb_port + "-->" + instance_port)
+
+        for ins in instances_list:
+            instances.append(ins['InstanceId'])
+
+        lb_info = '\t'.join(['classic', elb['LoadBalancerName'], elb['Scheme'], str(port_mapping), str(instances)])
+        all_lb_info += lb_info + "\n"
+
+    for elb in elbv2_list['LoadBalancers']:
+        listener_descriptions = elbv2_client.describe_listeners(LoadBalancerArn=elb['LoadBalancerArn'])
+        port_mapping = []
+        tgs = []
+        for listener in listener_descriptions['Listeners']:
+            port = str(listener['Port'])
+            default_action = listener['DefaultActions'][0]
+            if 'TargetGroupArn' in default_action:
+                tg_arn = default_action['TargetGroupArn']
+                tgs.append(tg_arn)
+                port_mapping.append(port + "-->" + tg_arn.split("/")[-2])
+            else:
+                port_mapping.append(port + "--> Rules")
+
+        all_tgs = {}
+        for tg in set(tgs):
+            tg_mapping = []
+            tg_response = elbv2_client.describe_target_health(TargetGroupArn=tg)
+            for thd in tg_response['TargetHealthDescriptions']:
+                tg_mapping.append(thd['Target']['Id'] + "-->" + str(thd['Target']['Port']))
+            all_tgs[tg.split("/")[-2]] = tg_mapping
+
+        lb_info = '\t'.join([elb['Type'], elb['LoadBalancerName'], elb['Scheme'], str(port_mapping), str(all_tgs)])
+        all_lb_info += lb_info + "\n"
+
+    return all_lb_info

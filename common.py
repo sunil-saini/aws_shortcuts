@@ -63,7 +63,8 @@ def service_function_mapping(s):
         "s3": aws.s3,
         "lambdas": aws.lambdas,
         "ssm_parameters": aws.ssm_parameters,
-        "route53": aws.hosted_zones
+        "route53": aws.hosted_zones,
+        "lb": aws.load_balancers
     }
 
     return mapping[s]
