@@ -1,12 +1,7 @@
 import boto3
 
 
-def ec2():
-
-    client = boto3.client('ec2')
-    response = client.describe_instances()
-    all_instances_info = str()
-
+def append_ec2(response, all_instances_info):
     for reservation in response['Reservations']:
         row = reservation['Instances'][0]
         tags = row['Tags']
@@ -25,6 +20,21 @@ def ec2():
 
         instance_info = '\t'.join([name, instance_id, private_ip, public_ip, instance_type, current_state])
         all_instances_info += instance_info+"\n"
+
+    return all_instances_info
+
+
+def ec2():
+
+    client = boto3.client('ec2')
+    all_instances_info = str()
+
+    response = client.describe_instances()
+    all_instances_info = append_ec2(response, all_instances_info)
+
+    if response.get('NextToken', None):
+        response = client.describe_instances(NextToken=response['NextToken'])
+        all_instances_info = append_ec2(response, all_instances_info)
 
     return all_instances_info
 
@@ -98,6 +108,28 @@ def get_ssm_parameter_value(parameter=None):
     print(row['Value'])
 
 
+def append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones):
+    for rrs in rrs_response['ResourceRecordSets']:
+        record_name = rrs['Name']
+        record_type = rrs['Type']
+
+        extra = []
+        if rrs.get('ResourceRecords', None):
+            for record in rrs['ResourceRecords']:
+                if record_type == "MX":
+                    extra.append(record['Value'].split()[-1])
+                else:
+                    extra.append(record['Value'].split()[0])
+
+        if rrs.get('AliasTarget', None):
+            extra.append(rrs['AliasTarget']['DNSName'])
+
+        to_append = [zone_name, zone_type, record_name, record_type] + extra
+        all_hosted_zones += '\t'.join(to_append) + "\n"
+
+    return all_hosted_zones
+
+
 def hosted_zones():
     client = boto3.client('route53')
     response = client.list_hosted_zones()
@@ -115,23 +147,13 @@ def hosted_zones():
 
         rrs_response = client.list_resource_record_sets(HostedZoneId=zone_id)
 
-        for rrs in rrs_response['ResourceRecordSets']:
-            record_name = rrs['Name']
-            record_type = rrs['Type']
+        all_hosted_zones = append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones)
 
-            extra = []
-            if rrs.get('ResourceRecords', None):
-                for record in rrs['ResourceRecords']:
-                    if record_type == "MX":
-                        extra.append(record['Value'].split()[-1])
-                    else:
-                        extra.append(record['Value'].split()[0])
-
-            if rrs.get('AliasTarget', None):
-                extra.append(rrs['AliasTarget']['DNSName'])
-
-            to_append = [zone_name, zone_type, record_name, record_type]+extra
-            all_hosted_zones += '\t'.join(to_append)+"\n"
+        while rrs_response['IsTruncated']:
+            rrs_response = client.list_resource_record_sets(HostedZoneId=zone_id,
+                                                            StartRecordName=rrs_response['NextRecordName'],
+                                                            StartRecordType=rrs_response['NextRecordType'])
+            all_hosted_zones = append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones)
 
     return all_hosted_zones
 
