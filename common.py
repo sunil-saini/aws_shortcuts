@@ -45,19 +45,6 @@ def write_string_to_file(filename, string):
     logger.info("file %s updated successfully" % filename)
 
 
-def get_alias_function(alias_name, file_path):
-    function = alias_name+"() {\n"+"grep \"$1\" "+"\""+file_path+"\""+"\n}\n\n"
-    return function
-
-
-def get_ssm_alias_function(alias_name):
-    host = collect_all_required_data()
-    prj = host['project']
-    get_function = " python -c \"from aws import get_ssm_parameter_value as gspv;gspv('$1')\""
-    function = alias_name+"() {\n"+"if [ ! -z \"$1\" ]\nthen\n"+" cd "+prj + "\n" + get_function + "\nfi"+"\n}\n\n"
-    return function
-
-
 def service_function_mapping(s):
     mapping = {
         "ec2": aws.ec2,
@@ -74,30 +61,21 @@ def service_function_mapping(s):
 def source_alias_functions(file_to_source):
 
     host = collect_all_required_data()
-    profile_file = host['home'] + "/." + host['shell'].split("/")[-1] + "rc"
 
-    if not check_file_exists(profile_file):
-        if host['os'] == "darwin":
-            profile_file = host['home'] + "/.bash_profile"
-        else:
-            profile_file = host['home'] + "/.bashrc"
+    if host['os'] == "darwin" and host['shell'] == "/bin/bash":
+        profile_file = host['home'] + "/.bash_profile"
+    else:
+        profile_file = host['home'] + "/." + host['shell'].split("/")[-1] + "rc"
 
     line_to_append = "\n# added by "+project+"\nsource "+file_to_source+"\n"
 
-    fp = open(profile_file)
+    fp = open(profile_file, 'a+')
     file_content = fp.read()
 
     if line_to_append not in file_content:
-        fp = open(profile_file, 'a+')
         fp.write(line_to_append)
         fp.close()
         logger.info("file %s updated successfully" % profile_file)
-
-
-def get_update_data_alias_function(alias_name):
-    host = collect_all_required_data()
-    function = alias_name + "() {\n" + host['cron'] + "\n}\n\n"
-    return function
 
 
 def read_project_current_commands():
@@ -140,45 +118,20 @@ def configure_project_commands():
         write_parser.write(configfile)
 
 
-def set_project_alias(alias_name):
-    host = collect_all_required_data()
-
-    rps = "python -c 'from common import read_project_current_commands as rpcc; rpcc()'"
-    cps = "python -c 'from common import configure_project_commands as cpc, create_alias_functions as caf;cpc(); caf()'"
-    prj = host['project']
-    project_alias = "awss() {\n cd "+prj+'\n if [[ "$1" == "configure" ]];then\n  '+cps+"\n else\n  "+rps+"\n fi\n}\n\n"
-
-    list_alias = alias_name+"() {\n cd " + host['project'] + "\n " + rps + "\n}\n\n"
-
-    return project_alias+list_alias
-
-
 def create_alias_functions():
-    log = "\nCreating alias functions...\n"
-    print(log)
-    logger.info(log)
     parser = properties_config_parser()
-    host = collect_all_required_data()
-    aliases = str()
+
+    awss_vars = [project]
+
     for service in parser.sections():
-        if service != 'project':
-            store_file = host['store'] + service + ".txt"
-            list_cmd = parser[service].get('list_command')
-            alias_function = get_alias_function(list_cmd, store_file)
-        else:
-            list_cmd = parser[service].get('list_command')
-            update_cmd = parser[service].get('update_command')
+        list_cmd = parser[service].get('list_command')
+        get_cmd = parser[service].get('get_command', None)
 
-            list_alias = set_project_alias(list_cmd)
-            update_alias = get_update_data_alias_function(update_cmd)
+        awss_vars.append(list_cmd)
+        awss_vars.append(service)
 
-            alias_function = list_alias + update_alias
+        if get_cmd:
+            awss_vars.append(get_cmd)
 
-        aliases += alias_function
-
-    aliases += get_ssm_alias_function(parser['ssm_parameters'].get('get_command'))
-    logger.info("Alias Functions: %s" % aliases)
-
-    alias_file = host['aliases']
-    write_string_to_file(alias_file, aliases)
-    source_alias_functions(alias_file)
+    cmd = "bash +x awss.sh " + ' '.join(awss_vars)
+    os.system(cmd)
