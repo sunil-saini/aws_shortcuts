@@ -6,4 +6,4 @@ cd "$HOME/.$project/$project"
 
 echo "Updating local data, it may take few minutes..."
 
-python driver.py
+python -c "from driver update_services_data as usd; usd()"
