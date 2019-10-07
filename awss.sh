@@ -28,7 +28,7 @@ $params() {
 $get_param() {
     if [ ! -z \"\$1\" ]
     then
-         cd $store/.$prj
+         cd $store/$prj
          python -c \"from aws import get_ssm_parameter_value as gspv;gspv('\$1')\"
     fi
 }
