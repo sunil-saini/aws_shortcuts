@@ -13,12 +13,16 @@ if ! [[ -z "$project" ]]; then
     rm -rf "$HOME/.$project"
 fi
 
-mkdir -p "$HOME/.$project"
-mkdir -p "$HOME/.$project/logs"
+mkdir -p $HOME/."$project"/{"$project",logs,temp}
+
 
 cd "$HOME/.$project"
 
-git clone --quiet https://github.com/sunil-saini/"$project".git >/dev/null
+git clone --quiet https://github.com/sunil-saini/"$project".git temp >/dev/null
+cp -r temp/{*.py,*.json,*.properties,*.txt,*.sh} "$project"
+
+rm -rf temp
+
 cd "$project"
 
 cron="$HOME/.$project/$project/cron.sh"
