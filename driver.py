@@ -6,6 +6,8 @@ from about_host import collect_all_required_data
 import common as comm
 
 logger = logging.getLogger(__name__)
+services_data = {}
+host = collect_all_required_data()
 
 
 def validate_config_properties():
@@ -41,26 +43,31 @@ def start_service_threads():
 def write_service_data():
     parser = comm.properties_config_parser()
     for service in parser.sections():
-        if service != 'project':
-            store_file = host['store'] + service + ".txt"
-            comm.write_string_to_file(store_file, services_data[service])
+        store_file = host['store'] + service + ".txt"
+        comm.write_string_to_file(store_file, services_data[service])
 
 
-services_data = {}
-comm.start_logging()
-logger.info("Started driver...")
+def update_services_data():
+    start_service_threads()
+    write_service_data()
 
-validate_config_properties()
 
-host = collect_all_required_data()
-logger.info("Collected Host Data: %s" % json.dumps(host))
+def main():
+    comm.start_logging()
+    logger.info("Started driver...")
 
-start_service_threads()
-write_service_data()
-comm.create_alias_functions()
+    validate_config_properties()
 
-comm.source_alias_functions(host['aliases'])
+    logger.info("Collected Host Data: %s" % json.dumps(host))
 
-print("-"*25+"Commands"+"-"*25)
-comm.read_project_current_commands()
-logger.info('driver done')
+    update_services_data()
+
+    comm.create_alias_functions()
+
+    comm.source_alias_functions(host['aliases'])
+    comm.read_project_current_commands()
+
+    logger.info('driver done')
+
+
+main()
