@@ -20,6 +20,7 @@ def worker(service_for):
     print(log)
     logger.info(log)
     service_data = comm.service_function_mapping(service_for)()
+    global services_data
     services_data[service_for] = service_data
     log = "Service: %s, thread done collecting data" % service_for
     print(log)
@@ -30,11 +31,10 @@ def start_service_threads():
     parser = comm.properties_config_parser()
     threads_list = []
     for service in parser.sections():
-        if service != 'project':
-            thread = threading.Thread(target=worker, args=(service,))
-            threads_list.append(thread)
-            thread.start()
-            time.sleep(1)
+        thread = threading.Thread(target=worker, args=(service,))
+        threads_list.append(thread)
+        thread.start()
+        time.sleep(1)
 
     for thread in threads_list:
         thread.join()
@@ -42,6 +42,8 @@ def start_service_threads():
 
 def write_service_data():
     parser = comm.properties_config_parser()
+    global services_data
+    global host
     for service in parser.sections():
         store_file = host['store'] + service + ".txt"
         comm.write_string_to_file(store_file, services_data[service])
