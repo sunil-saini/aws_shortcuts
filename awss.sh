@@ -57,7 +57,8 @@ case \"\$1\" in
 		rm -rf temp
 		cd $prj
 		python -m pip install --ignore-installed -q -r requirements.txt --user
-		python driver.py
+		awss update-data
+		awss
 		;;
 	*)
 		cd $store/$prj
