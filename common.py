@@ -53,7 +53,8 @@ def get_alias_function(alias_name, file_path):
 def get_ssm_alias_function(alias_name):
     host = collect_all_required_data()
     prj = host['project']
-    function = alias_name+"() {\n"+"if [ ! -z \"$1\" ]\nthen\n"+"python "+prj+"/get_ssm_parameter.py \"$1\"\nfi"+"\n}\n\n"
+    get_function = " python -c \"from aws import get_ssm_parameter_value as gspv;gspv('$1')\""
+    function = alias_name+"() {\n"+"if [ ! -z \"$1\" ]\nthen\n"+" cd "+prj + "\n" + get_function + "\nfi"+"\n}\n\n"
     return function
 
 
