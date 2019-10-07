@@ -33,7 +33,7 @@ python -m pip install --ignore-installed -q -r requirements.txt --user
 
 printf "\nStarted collecting data from AWS, it may take few minutes...\n"
 
-if python driver.py ; then
+if python -c "from driver import main; main()" ; then
     crontab -l > current_cron
     cron_line="0 */2 * * * /bin/bash $cron"
     if grep -Fxq "$cron_line" current_cron; then
