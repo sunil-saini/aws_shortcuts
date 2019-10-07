@@ -59,6 +59,8 @@ start_service_threads()
 write_service_data()
 comm.create_alias_functions()
 
+comm.source_alias_functions(host['aliases'])
+
 print("-"*25+"Commands"+"-"*25)
 comm.read_project_current_commands()
 logger.info('driver done')
