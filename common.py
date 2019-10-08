@@ -85,11 +85,13 @@ def read_project_current_commands():
     properties_file = host['properties']
     read_parser.read(properties_file)
 
+    print("\n---------------------------------------------------------------------\n")
     for sec in read_parser.sections():
         for item in read_parser.items(sec):
             print("Current "+item[0]+" for "+sec+" is - "+item[1])
-
-    print("\nTo rename commands - awss configure\n")
+    print("\n---------------------------------------------------------------------\n")
+    print("\nList Current Set Commands - awss\nRename commands - awss configure\n")
+    print("\nUpdate Local data - awss update-data\nUpdate Project Code base - awss update-project\n")
 
 
 def configure_project_commands():
