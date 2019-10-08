@@ -4,8 +4,10 @@ project="aws_shortcuts"
 
 cd "$HOME/.$project/$project"
 
-echo "Updating local data, it may take few minutes..."
+printf "\nStarted collecting latest data, it may take few minutes...\n\n"
 
 python -c "from driver import update_services_data as usd; usd()"
+
+printf "\nLocal data is up-to-date now\n\n"
 
 exit 0
