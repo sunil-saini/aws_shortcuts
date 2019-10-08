@@ -65,6 +65,14 @@ Get all route53 hosted DNS with their all records type
         example.com.	Private	v1.example.com.	A	10.10.74.4	10.10.74.5
         example.com.	Private	v2.example.com.	A	10.10.75.4	10.10.75.5
     
+Get all load balancers with their port(s), instance(s), target group(s) mapping
+
+        allb <any pattern>
+        
+        allb 
+        
+        classic     testclb     internet-facing     ['80-->80', '443-->80']     ['i-a51baa4a', 'i-e4142b1f']
+        network     testnlb     internet-facing     ['80-->test-tg']    {'test-tg': [i-d21resde-->80, i-d345werds-->80]}
         
 All list commands support pattern(s), so just specify the pattern for specific result else all dataset will be returned
 
@@ -83,10 +91,17 @@ List all configured commands at any time
         
         awss 
 
-Rename any command at any time
+Rename any command(s) at any time
 
         awss configure
+
+Fetch latest data quickly from AWS
+
+        awss update-data
         
+Update Project to latest version for new features
+
+        awss update-project        
 
 Connect to me for any feedback
 
