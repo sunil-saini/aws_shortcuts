@@ -78,6 +78,15 @@ def source_alias_functions(file_to_source):
         logger.info("file %s updated successfully" % profile_file)
 
 
+def services_suffix(service_for):
+    suffixes = {
+        "ec2": "instance",
+        "s3": "bucket",
+        "route53": "hosted zones"
+    }
+    return suffixes.get(service_for, None)
+
+
 def read_project_current_commands():
     host = collect_all_required_data()
     read_parser = RawConfigParser()
@@ -88,10 +97,16 @@ def read_project_current_commands():
     print("\n---------------------------------------------------------------------\n")
     for sec in read_parser.sections():
         for item in read_parser.items(sec):
-            print("Current "+item[0]+" for "+sec+" is - "+item[1])
+            suffix = services_suffix(sec)
+            description = item[0].split("_")[0].title() + " " + sec
+            if suffix:
+                description += " " + suffix
+            print("%s -\t%s" % (description.ljust(35), item[1]))
+    print("\n%s -\t%s" % ("List commands".ljust(35), "awss"))
+    print("%s -\t%s" % ("Rename commands".ljust(35), "awss configure\n"))
+    print("%s -\t%s" % ("Fetch latest data from AWS".ljust(35), "awss update-data"))
+    print("%s -\t%s" % ("Update project to latest version".ljust(35), "awss update-project\n"))
     print("\n---------------------------------------------------------------------\n")
-    print("\nList Current Set Commands - awss\nRename commands - awss configure\n")
-    print("\nUpdate Local data - awss update-data\nUpdate Project Code base - awss update-project\n")
 
 
 def configure_project_commands():
@@ -107,17 +122,27 @@ def configure_project_commands():
     except NameError:
         input_method = input
 
+    need_to_rename = False
+
     for sec in read_parser.sections():
         write_parser.add_section(sec)
         for item in read_parser.items(sec):
-            cmd = input_method(item[0]+" for " + sec + " [ Current - " + item[1] + " ]: ")
+            suffix = services_suffix(sec)
+            description = item[0].split("_")[0].title() + " " + sec
+            if suffix:
+                description += " " + suffix
+            description += " [ Current - " + item[1] + " ]: "
+            cmd = input_method(description)
             if cmd:
                 write_parser.set(sec, item[0], cmd)
+                need_to_rename = True
             else:
                 write_parser.set(sec, item[0], item[1])
 
-    with open(properties_file, 'w') as configfile:
-        write_parser.write(configfile)
+    if need_to_rename:
+        with open(properties_file, 'w') as configfile:
+            write_parser.write(configfile)
+        print("\nCommand(s) renamed successfully\n")
 
 
 def create_alias_functions():
