@@ -28,8 +28,10 @@ $params() {
 $get_param() {
     if [ ! -z \"\$1\" ]
     then
+         cwd=$(pwd)
          cd $store/$prj
          python -c \"from aws import get_ssm_parameter_value as gspv;gspv('\$1')\"
+         cd $cwd
     fi
 }
 
@@ -42,6 +44,7 @@ $lb() {
 }
 
 awss() {
+cwd=$(pwd)
 cd $HOME/.$prj
 case \"\$1\" in
 	"configure")
@@ -61,8 +64,9 @@ case \"\$1\" in
 		awss
 		;;
 	*)
-		cd $store/$prj
+		cd $prj
 		python -c 'from common import read_project_current_commands as rpcc; rpcc()'
+		;;
 esac
-
+cd $cwd
 }""" > "$alias_file"
