@@ -146,6 +146,7 @@ def configure_project_commands():
 
 
 def create_alias_functions():
+    host = collect_all_required_data()
     parser = properties_config_parser()
 
     awss_vars = [project]
@@ -160,5 +161,5 @@ def create_alias_functions():
         if get_cmd:
             awss_vars.append(get_cmd)
 
-    cmd = "bash +x awss.sh " + ' '.join(awss_vars)
+    cmd = "bash +x "+host['awss']+" " + ' '.join(awss_vars)
     os.system(cmd)

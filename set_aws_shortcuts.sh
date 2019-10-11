@@ -1,39 +1,40 @@
 #!/usr/bin/env bash
 
 project="aws_shortcuts"
+
+store="$HOME/.$project"
+project_path="$store/$project"
+alias_file="$store/.aliases"
+
 printf "\nDetected OS type - $OSTYPE"
 if ! [[ "$OSTYPE" == darwin* || "$OSTYPE" == "linux-gnu" ]]; then
     echo "Unsupported OS, exiting"
     exit 1
 fi
 
-printf "\nStarted setting the project..."
+printf "\nStarted setting the project $project..."
 
 if ! [[ -z "$project" ]]; then
-    rm -rf "$HOME/.$project"
+    rm -rf "$store"
 fi
 
-mkdir -p $HOME/."$project"/{"$project",logs,temp}
+mkdir -p "$store"/{"$project",logs,temp}
 
+git clone --quiet https://github.com/sunil-saini/"$project".git "$store/temp" >/dev/null
+cp -r "$store/temp"/{*.py,*.json,*.properties,*.txt,*.sh} "$project_path"
 
-cd "$HOME/.$project"
+rm -rf "$store/temp"
 
-git clone --quiet https://github.com/sunil-saini/"$project".git temp >/dev/null
-cp -r temp/{*.py,*.json,*.properties,*.txt,*.sh} "$project"
-
-rm -rf temp
-
-cd "$project"
-
-cron="$HOME/.$project/$project/cron.sh"
+cron="$project_path/cron.sh"
 
 chmod +x "$cron"
+
 printf "\nInstalling pip dependencies..."
-python -m pip install --ignore-installed -q -r requirements.txt --user
+python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
 
 printf "\nStarted collecting data from AWS, it may take few minutes...\n"
 
-if python -c "from driver import main; main()" ; then
+if python -c "import sys;sys.path.append('$project_path');from driver import main; main()"; then
     crontab -l > current_cron
     cron_line="0 */2 * * * /bin/bash $cron"
     if grep -Fxq "$cron_line" current_cron; then
@@ -45,7 +46,7 @@ if python -c "from driver import main; main()" ; then
         echo "Cron set successfully to keep updating data from AWS periodically"
     fi
 
-    source "$HOME/.$project/.aliases"
+    source "$alias_file"
     echo "Project set successfully, Open new terminal tab and enjoy the shortcut commands"
 else
     echo "Error(s) in setting the project, please fix above mentioned error and run again"

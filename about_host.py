@@ -33,6 +33,7 @@ def collect_all_required_data():
     data['aliases'] = data['store'] + ".aliases"
     data['project'] = data['store'] + project
     data['cron'] = data['project'] + "/cron.sh"
+    data['awss'] = data['project'] + "/awss.sh"
     data['properties'] = data['project'] + "/commands.properties"
 
     return data

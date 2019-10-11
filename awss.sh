@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
 
-read -r prj ec2 ec2f s3 s3f lambdas lambdasf<<< $(echo $1 $2 $3 $4 $5 $6 $7)
+read -r project ec2 ec2f s3 s3f lambdas lambdasf<<< $(echo $1 $2 $3 $4 $5 $6 $7)
 shift 7
 read -r params paramsf get_param dns dnsf lb lbf<<< $(echo $1 $2 $3 $4 $5 $6 $7)
 
-store="$HOME/.$prj"
-alias_file="$HOME/.$prj/.aliases"
+store="$HOME/.$project"
+project_path="$store/$project"
+alias_file="$store/.aliases"
+
+import_project="import sys;sys.path.append('$project_path')"
 
 echo """
 $ec2() {
@@ -28,10 +31,7 @@ $params() {
 $get_param() {
     if [ ! -z \"\$1\" ]
     then
-         cwd=$(pwd)
-         cd $store/$prj
-         python -c \"from aws import get_ssm_parameter_value as gspv;gspv('\$1')\"
-         cd $cwd
+         python -c \"$import_project;from aws import get_ssm_parameter_value as gspv;gspv('\$1')\"
     fi
 }
 
@@ -44,29 +44,24 @@ $lb() {
 }
 
 awss() {
-cwd=$(pwd)
-cd $HOME/.$prj
 case \"\$1\" in
 	"configure")
-		cd $prj
-		python -c 'from common import configure_project_commands as cpc, create_alias_functions as caf;cpc(); caf()'
+		python -c \"$import_project;from common import configure_project_commands as cpc, create_alias_functions as caf;cpc();caf()\"
 		;;
 	"update-data")
-		$store/$prj/cron.sh
+		$project_path/cron.sh
 		;;
 	"update-project")
-		git clone --quiet https://github.com/sunil-saini/$prj.git temp >/dev/null
-		cp -r temp/{*.py,*.json,*.txt,*.sh} $prj
-		rm -rf temp
-		cd $prj
-		python -m pip install --ignore-installed -q -r requirements.txt --user
+		git clone --quiet https://github.com/sunil-saini/"$project".git "$store/temp" >/dev/null
+		cp -r "$store/temp"/{*.py,*.json,*.txt,*.sh} $project_path
+		rm -rf "$store/temp"
+		python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
+		python -c \"$import_project;from common import create_alias_functions as caf;caf()\"
 		awss update-data
 		awss
 		;;
 	*)
-		cd $prj
-		python -c 'from common import read_project_current_commands as rpcc; rpcc()'
+		python -c \"$import_project;from common import read_project_current_commands as rpcc; rpcc()\"
 		;;
 esac
-cd $cwd
 }""" > "$alias_file"
