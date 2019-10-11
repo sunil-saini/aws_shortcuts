@@ -54,7 +54,7 @@ case \"\$1\" in
 		;;
 	"update-project")
 		git clone --quiet https://github.com/sunil-saini/"$project".git "$store/temp" >/dev/null
-		cp -r "$store/temp"/{resources/*.json,scripts,services,requirements.txt} $project_path
+		cp -r "$store/temp"/{resources/*.json,scripts,services,requirements.txt,awss.py} $project_path
 		rm -rf "$store/temp"
 		python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
 		python -c \"$import_project;common.create_alias_functions()\"
