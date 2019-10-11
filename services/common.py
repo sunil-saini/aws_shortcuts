@@ -1,17 +1,16 @@
 import os
 import json
 import logging.config
-import aws
+from services import aws
 from configparser import RawConfigParser
-from about_host import collect_all_required_data, project
+from services.host import host_data, project
 
 logger = logging.getLogger(__name__)
+host = host_data()
 
 
-def start_logging(default_path="logging.json", default_level=logging.INFO):
-
-    host = collect_all_required_data()
-    path = default_path
+def start_logging(default_level=logging.INFO):
+    path = host['resources']+"logging.json"
     if os.path.exists(path):
         with open(path, 'rt') as log_f:
             config = json.load(log_f)
@@ -28,9 +27,13 @@ def start_logging(default_path="logging.json", default_level=logging.INFO):
         logging.basicConfig(level=default_level)
 
 
+start_logging()
+
+
 def properties_config_parser():
+    prop_file_path = host['resources']+"commands.properties"
     parser = RawConfigParser()
-    parser.read("commands.properties")
+    parser.read(prop_file_path)
     return parser
 
 
@@ -60,8 +63,6 @@ def service_function_mapping(s):
 
 def source_alias_functions(file_to_source):
 
-    host = collect_all_required_data()
-
     if host['os'] == "darwin" and host['shell'] == "/bin/bash":
         profile_file = host['home'] + "/.bash_profile"
     else:
@@ -88,12 +89,7 @@ def services_suffix(service_for):
 
 
 def read_project_current_commands():
-    host = collect_all_required_data()
-    read_parser = RawConfigParser()
-
-    properties_file = host['properties']
-    read_parser.read(properties_file)
-
+    read_parser = properties_config_parser()
     print("\n---------------------------------------------------------------------\n")
     for sec in read_parser.sections():
         for item in read_parser.items(sec):
@@ -111,12 +107,8 @@ def read_project_current_commands():
 
 def configure_project_commands():
     logger.info("Started configuring project commands...")
-    host = collect_all_required_data()
-    read_parser = RawConfigParser()
+    read_parser = properties_config_parser()
     write_parser = RawConfigParser()
-
-    properties_file = host['properties']
-    read_parser.read(properties_file)
 
     try:
         input_method = raw_input
@@ -141,6 +133,7 @@ def configure_project_commands():
                 write_parser.set(sec, item[0], item[1])
 
     if need_to_rename:
+        properties_file = host['resources']+"commands.properties"
         with open(properties_file, 'w') as configfile:
             write_parser.write(configfile)
         print("\nCommand(s) renamed successfully\n")
@@ -150,7 +143,6 @@ def configure_project_commands():
 
 def create_alias_functions():
     logger.info("Creating alias functions...")
-    host = collect_all_required_data()
     parser = properties_config_parser()
 
     awss_vars = [project]
@@ -166,7 +158,7 @@ def create_alias_functions():
             awss_vars.append(get_cmd)
 
     params_to_pass = ' '.join(awss_vars)
-    awss_sh = "bash +x "+host['awss']
+    awss_sh = "bash +x "+host['scripts']+"awss.sh"
     cmd = awss_sh + " " + params_to_pass
     logger.info("command - %s" % cmd)
     os.system(cmd)

@@ -23,7 +23,7 @@ def get_current_shell():
     return shell
 
 
-def collect_all_required_data():
+def host_data():
     data = dict()
     data['os'] = get_os()
     data['user'] = get_current_user()
@@ -31,9 +31,8 @@ def collect_all_required_data():
     data['shell'] = get_current_shell()
     data['store'] = data['home'] + "/."+project+"/"
     data['aliases'] = data['store'] + ".aliases"
-    data['project'] = data['store'] + project
-    data['cron'] = data['project'] + "/cron.sh"
-    data['awss'] = data['project'] + "/awss.sh"
-    data['properties'] = data['project'] + "/commands.properties"
+    data['project'] = data['store'] + project+"/"
+    data['scripts'] = data['project'] + "scripts/"
+    data['resources'] = data['project'] + "resources/"
 
     return data

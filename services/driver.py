@@ -1,14 +1,14 @@
-import os
 import time
 import json
 import threading
 import logging.config
-from about_host import collect_all_required_data
-import common as comm
+from services.host import host_data
+from services import common as comm
 
 logger = logging.getLogger(__name__)
+comm.start_logging()
 services_data = {}
-host = collect_all_required_data()
+host = host_data()
 
 
 def validate_config_properties():
@@ -52,10 +52,6 @@ def update_services_data():
     write_service_data()
 
 
-def change_dir(path):
-    os.chdir(path)
-
-
 def main():
     comm.start_logging()
     logger.info("Started driver...")
@@ -73,5 +69,3 @@ def main():
 
     logger.info('driver done')
 
-
-change_dir(host['project'])
