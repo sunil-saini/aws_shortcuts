@@ -22,7 +22,7 @@ fi
 mkdir -p "$store"/{"$project",logs,temp}
 
 git clone --quiet https://github.com/sunil-saini/"$project".git "$store/temp" >/dev/null
-cp -r "$store/temp"/{resources,scripts,services,requirements.txt} $project_path
+cp -r "$store/temp"/{resources,scripts,services,requirements.txt,awss.py} $project_path
 
 rm -rf "$store/temp"
 
