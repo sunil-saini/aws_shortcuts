@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import threading
@@ -51,6 +52,10 @@ def update_services_data():
     write_service_data()
 
 
+def change_dir(path):
+    os.chdir(path)
+
+
 def main():
     comm.start_logging()
     logger.info("Started driver...")
@@ -68,3 +73,5 @@ def main():
 
     logger.info('driver done')
 
+
+change_dir(host['project'])

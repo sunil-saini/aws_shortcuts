@@ -14,8 +14,9 @@ fi
 
 printf "\nStarted setting the project $project..."
 
-if ! [[ -z "$project" ]]; then
+if [[ -d "$store" ]]; then
     rm -rf "$store"
+    printf "\nDeleted old files of project"
 fi
 
 mkdir -p "$store"/{"$project",logs,temp}

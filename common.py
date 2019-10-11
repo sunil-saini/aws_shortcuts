@@ -110,6 +110,7 @@ def read_project_current_commands():
 
 
 def configure_project_commands():
+    logger.info("Started configuring project commands...")
     host = collect_all_required_data()
     read_parser = RawConfigParser()
     write_parser = RawConfigParser()
@@ -144,8 +145,11 @@ def configure_project_commands():
             write_parser.write(configfile)
         print("\nCommand(s) renamed successfully\n")
 
+    logger.info("commands configured successfully")
+
 
 def create_alias_functions():
+    logger.info("Creating alias functions...")
     host = collect_all_required_data()
     parser = properties_config_parser()
 
@@ -161,5 +165,8 @@ def create_alias_functions():
         if get_cmd:
             awss_vars.append(get_cmd)
 
-    cmd = "bash +x "+host['awss']+" " + ' '.join(awss_vars)
+    params_to_pass = ' '.join(awss_vars)
+    awss_sh = "bash +x "+host['awss']
+    cmd = awss_sh + " " + params_to_pass
+    logger.info("command - %s" % cmd)
     os.system(cmd)
