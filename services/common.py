@@ -71,6 +71,7 @@ def source_alias_functions(file_to_source):
     line_to_append = "\n# added by "+project+"\nsource "+file_to_source+"\n"
 
     fp = open(profile_file, 'a+')
+    fp.seek(0)
     file_content = fp.read()
 
     if line_to_append not in file_content:
