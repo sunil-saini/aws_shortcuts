@@ -46,7 +46,7 @@ if python "$project_path/awss.py"; then
         echo "Cron set successfully to keep updating data from AWS periodically"
     fi
     rm current_cron
-    . "$alias_file"
+    source "$alias_file"
     echo "Project set successfully, Open new terminal tab and enjoy the shortcut commands"
 else
     echo "Error(s) in setting the project, please fix above mentioned error and run again"
