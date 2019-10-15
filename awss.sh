@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo $SHLVL
+
 project="aws_shortcuts"
 
 store="$HOME/.$project"
