@@ -24,11 +24,12 @@ def log_and_print(log):
 def worker(service_for):
     log_and_print("Service: %s, thread started collecting data" % service_for)
     service_data = comm.service_function_mapping(service_for)()
-    services_data[service_for] = service_data
+    store_file = host['store'] + service_for + ".txt"
+    comm.write_string_to_file(store_file, service_data)
     log_and_print("Service: %s, thread done collecting data" % service_for)
 
 
-def start_service_threads():
+def update_services_data():
     parser = comm.properties_config_parser()
     threads_list = []
     for service in parser.sections():
@@ -39,18 +40,6 @@ def start_service_threads():
 
     for thread in threads_list:
         thread.join()
-
-
-def write_service_data():
-    parser = comm.properties_config_parser()
-    for service in parser.sections():
-        store_file = host['store'] + service + ".txt"
-        comm.write_string_to_file(store_file, services_data[service])
-
-
-def update_services_data():
-    start_service_threads()
-    write_service_data()
 
 
 def main():

@@ -1,7 +1,7 @@
 import boto3
 
 
-def append_ec2(response, all_instances_info):
+def append_ec2(response, instances_info_list, max_len):
     for reservation in response['Reservations']:
         row = reservation['Instances'][0]
         tags = row['Tags']
@@ -16,27 +16,36 @@ def append_ec2(response, all_instances_info):
         for tag in tags:
             if tag['Key'] == 'Name':
                 name = tag['Value']
+                max_len = max(len(name), max_len)
                 break
 
-        instance_info = '\t'.join([name, instance_id, private_ip, public_ip, instance_type, current_state])
-        all_instances_info += instance_info+"\n"
+        instance_info = [name, instance_id, private_ip, public_ip, instance_type, current_state]
+        instances_info_list.append(instance_info)
 
-    return all_instances_info
+    return instances_info_list, max_len
 
 
 def ec2():
 
     client = boto3.client('ec2')
-    all_instances_info = str()
+    instances_info_list = list()
 
     response = client.describe_instances()
-    all_instances_info = append_ec2(response, all_instances_info)
+    instances_info_list, max_len = append_ec2(response, instances_info_list, 0)
 
     if response.get('NextToken', None):
         response = client.describe_instances(NextToken=response['NextToken'])
-        all_instances_info = append_ec2(response, all_instances_info)
+        instances_info_list, max_len = append_ec2(response, instances_info_list, max_len)
 
-    return all_instances_info
+    all_instances_info = str()
+
+    for ins in instances_info_list:
+        all_instances_info += ins[0].ljust(max_len+5)
+        for i in ins[1:]:
+            all_instances_info += i.ljust(25)
+        all_instances_info += "\n"
+
+    return all_instances_info.strip()
 
 
 def s3():
@@ -108,9 +117,10 @@ def get_ssm_parameter_value(parameter=None):
     print(row['Value'])
 
 
-def append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones):
+def append_hosted_zones(zone_name, zone_type, rrs_response, zones_list, record_len):
     for rrs in rrs_response['ResourceRecordSets']:
         record_name = rrs['Name']
+        record_len = max(len(record_name), record_len)
         record_type = rrs['Type']
 
         extra = []
@@ -125,20 +135,22 @@ def append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones):
             extra.append(rrs['AliasTarget']['DNSName'])
 
         to_append = [zone_name, zone_type, record_name, record_type] + extra
-        all_hosted_zones += '\t'.join(to_append) + "\n"
+        zones_list.append(to_append)
 
-    return all_hosted_zones
+    return zones_list, record_len
 
 
 def hosted_zones():
     client = boto3.client('route53')
     response = client.list_hosted_zones()
 
-    all_hosted_zones = str()
-
+    zones_list = list()
+    zone_len = 0
+    record_len = 0
     for row in response['HostedZones']:
         zone_id = row['Id']
         zone_name = row['Name']
+        zone_len = max(len(zone_name), zone_len)
         zone_type = None
         if row['Config']['PrivateZone']:
             zone_type = "Private"
@@ -147,15 +159,20 @@ def hosted_zones():
 
         rrs_response = client.list_resource_record_sets(HostedZoneId=zone_id)
 
-        all_hosted_zones = append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones)
+        zones_list, record_len = append_hosted_zones(zone_name, zone_type, rrs_response, zones_list, record_len)
 
         while rrs_response['IsTruncated']:
             rrs_response = client.list_resource_record_sets(HostedZoneId=zone_id,
                                                             StartRecordName=rrs_response['NextRecordName'],
                                                             StartRecordType=rrs_response['NextRecordType'])
-            all_hosted_zones = append_hosted_zones(zone_name, zone_type, rrs_response, all_hosted_zones)
+            zones_list, record_len = append_hosted_zones(zone_name, zone_type, rrs_response, zones_list, record_len)
 
-    return all_hosted_zones
+    all_hosted_zones = str()
+    for zone in zones_list:
+        all_hosted_zones += zone[0].ljust(zone_len+5)+zone[1].ljust(10)+zone[2].ljust(record_len+5)+zone[3].ljust(10)
+        all_hosted_zones += ' '.join(zone[4:]) + "\n"
+
+    return all_hosted_zones.strip()
 
 
 def load_balancers():
