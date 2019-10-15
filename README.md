@@ -82,7 +82,7 @@ Steps to set the project -
 
 2. Run the following command to set project with default commands
 
-        curl -s https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/set_aws_shortcuts.sh | bash +x
+        curl -s https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/bug%232/awss.sh -o awss.sh && . ./awss.sh && rm awss.sh
     
 3. Open new terminal tab and play with default set commands
 
