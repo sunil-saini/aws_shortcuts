@@ -1,13 +1,32 @@
 #!/usr/bin/env bash
 
+
+get_os_type() {
+
+case "$OSTYPE" in
+  linux*)   os="Linux" ;;
+  darwin*)  os="Mac OS" ;;
+  win*)     os="Windows" ;;
+  msys*)    os="MSYS / MinGW / Git Bash" ;;
+  cygwin*)  os="Cygwin" ;;
+  bsd*)     os="BSD" ;;
+  solaris*) os="Solaris" ;;
+  *)        os="Unknown: $OSTYPE" ;;
+esac
+echo "$os"
+
+}
+
+os_type=$(get_os_type)
+
 project="aws_shortcuts"
 
 store="$HOME/.$project"
 project_path="$store/$project"
 alias_file="$store/.aliases"
 
-printf "\nDetected OS type - $OSTYPE"
-if ! [[ "$OSTYPE" == darwin* || "$OSTYPE" == "linux-gnu" ]]; then
+printf "\nOS - $os_type"
+if ! [[ "$os_type" == "Linux" || "$os_type" == "Mac OS" || "$os_type" == "BSD" || "$os_type" == "Solaris" ]]; then
     echo "Unsupported OS, exiting"
     exit 1
 fi
@@ -33,7 +52,7 @@ chmod +x "$cron"
 printf "\nInstalling pip dependencies..."
 python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
 
-printf "\nStarted collecting data from AWS, it may take few minutes...\n"
+printf "\nStarted Collecting data from AWS...\n\n"
 
 if python "$project_path/awss.py"; then
     crontab -l > current_cron
@@ -43,7 +62,7 @@ if python "$project_path/awss.py"; then
     else
         echo "0 */2 * * * /bin/bash $cron" >> current_cron
         crontab current_cron
-        echo "Cron set successfully to keep updating data from AWS periodically"
+        echo "Cron set successfully to keep updating local data from AWS periodically"
     fi
     rm current_cron
     source "$alias_file"
