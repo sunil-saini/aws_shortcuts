@@ -16,15 +16,16 @@ def validate_config_properties():
     pass
 
 
-def worker(service_for):
-    log = "Service: %s, thread started collecting data" % service_for
+def log_and_print(log):
     print(log)
     logger.info(log)
+
+
+def worker(service_for):
+    log_and_print("Service: %s, thread started collecting data" % service_for)
     service_data = comm.service_function_mapping(service_for)()
     services_data[service_for] = service_data
-    log = "Service: %s, thread done collecting data" % service_for
-    print(log)
-    logger.info(log)
+    log_and_print("Service: %s, thread done collecting data" % service_for)
 
 
 def start_service_threads():
@@ -68,4 +69,3 @@ def main():
     comm.read_project_current_commands()
 
     logger.info('driver done')
-

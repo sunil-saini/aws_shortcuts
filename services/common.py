@@ -159,7 +159,7 @@ def create_alias_functions():
             awss_vars.append(get_cmd)
 
     params_to_pass = ' '.join(awss_vars)
-    awss_sh = "bash +x "+host['scripts']+"awss.sh"
-    cmd = awss_sh + " " + params_to_pass
+    aliases_sh = "bash +x "+host['scripts']+"aliases.sh"
+    cmd = aliases_sh + " " + params_to_pass
     logger.info("command - %s" % cmd)
     os.system(cmd)
