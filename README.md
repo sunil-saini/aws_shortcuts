@@ -105,7 +105,7 @@ Steps to set the project -
 
 3. Run the following command to set project with default commands
 
-        curl -s https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/awss.sh -o awss.sh && . ./awss.sh && rm awss.sh
+       curl -s https://raw.githubusercontent.com/sunil-saini/aws_shortcuts/master/awss.sh -o awss.sh && . ./awss.sh && rm awss.sh
     
 
 Connect to me for any feedback
