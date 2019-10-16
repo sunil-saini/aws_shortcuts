@@ -11,7 +11,10 @@ def get_os():
 
 
 def get_current_user():
-    return os.environ['USER']
+    if os.environ['USER']:
+        return os.environ['USER']
+    else:
+        return os.environ['LOGNAME']
 
 
 def get_home_directory():
