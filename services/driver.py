@@ -12,7 +12,7 @@ host = host_data()
 
 
 def validate_config_properties():
-    # TO DO
+    # TODO validate resources/commands.properties
     pass
 
 

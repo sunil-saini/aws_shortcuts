@@ -226,3 +226,48 @@ def load_balancers():
         all_lb_info += lb_info + "\n"
 
     return all_lb_info
+
+
+def cf():
+    client = boto3.client('cloudfront')
+    response = client.list_distributions()
+
+    all_cfs = str()
+
+    for item in response['DistributionList']['Items']:
+        distribution = client.get_distribution(Id=item['Id'])['Distribution']
+        distribution_config = distribution['DistributionConfig']
+        distribution_origins = distribution_config['Origins']
+
+        origins_id = {}
+
+        for i in range(distribution_origins['Quantity']):
+            origin_item = distribution_origins['Items'][i]
+            origins_id[origin_item['Id']] = origin_item['DomainName'] + origin_item['OriginPath']
+
+        paths = []
+        default_cache_behaviour = distribution_config['DefaultCacheBehavior']
+        paths.append("*" + "-->" + origins_id[default_cache_behaviour['TargetOriginId']])
+
+        other_cache_behaviour = distribution_config['CacheBehaviors']
+
+        for j in range(other_cache_behaviour['Quantity']):
+            behaviour_item = other_cache_behaviour['Items'][j]
+            path_pattern = behaviour_item['PathPattern']
+            if path_pattern[0] == '/':
+                routed_path = origins_id[behaviour_item['TargetOriginId']] + path_pattern
+            else:
+                routed_path = origins_id[behaviour_item['TargetOriginId']] + "/" + path_pattern
+            paths.append(path_pattern + "-->" + routed_path)
+
+        aliases = "-"
+        if distribution.get('AliasICPRecordals', None):
+            aliases = []
+            for cname in distribution['AliasICPRecordals']:
+                aliases.append(cname['CNAME'])
+
+        all_cfs += '\t'.join([distribution['DomainName'], ','.join(aliases), ','.join(paths)]) + "\n"
+
+        # TODO write pagination
+
+    return all_cfs

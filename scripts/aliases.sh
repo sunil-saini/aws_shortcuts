@@ -13,19 +13,19 @@ import_project="import sys;sys.path.append('$project_path');from services import
 
 echo """
 $ec2() {
-    grep \"\$1\" \"$store/$ec2f.txt\"
+    grep -i \"\$1\" \"$store/$ec2f.txt\"
 }
 
 $s3() {
-    grep \"\$1\" \"$store/$s3f.txt\"
+    grep -i \"\$1\" \"$store/$s3f.txt\"
 }
 
 $lambdas() {
-    grep \"\$1\" \"$store/$lambdasf.txt\"
+    grep -i \"\$1\" \"$store/$lambdasf.txt\"
 }
 
 $params() {
-    grep \"\$1\" \"$store/$paramsf.txt\"
+    grep -i \"\$1\" \"$store/$paramsf.txt\"
 }
 
 $get_param() {
@@ -36,11 +36,11 @@ $get_param() {
 }
 
 $dns() {
-    grep \"\$1\" \"$store/$dnsf.txt\"
+    grep -i \"\$1\" \"$store/$dnsf.txt\"
 }
 
 $lb() {
-    grep \"\$1\" \"$store/$lbf.txt\"
+    grep -i \"\$1\" \"$store/$lbf.txt\"
 }
 
 awss() {
