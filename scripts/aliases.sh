@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 
-read -r project ec2 ec2f s3 s3f lambdas lambdasf<<< $(echo $1 $2 $3 $4 $5 $6 $7)
-shift 7
-read -r params paramsf get_param dns dnsf lb lbf<<< $(echo $1 $2 $3 $4 $5 $6 $7)
+read -r project ec2 ec2f s3 s3f lambdas lambdasf params paramsf<<< $(echo $1 $2 $3 $4 $5 $6 $7 $8 $9)
+shift 9
+read -r get_param dns dnsf lb lbf cf cff<<< $(echo $1 $2 $3 $4 $5 $6 $7)
 
 store="$HOME/.$project"
 project_path="$store/$project"
@@ -13,19 +13,19 @@ import_project="import sys;sys.path.append('$project_path');from services import
 
 echo """
 $ec2() {
-    grep \"\$1\" \"$store/$ec2f.txt\"
+    grep -i \"\$1\" \"$store/$ec2f.txt\"
 }
 
 $s3() {
-    grep \"\$1\" \"$store/$s3f.txt\"
+    grep -i \"\$1\" \"$store/$s3f.txt\"
 }
 
 $lambdas() {
-    grep \"\$1\" \"$store/$lambdasf.txt\"
+    grep -i \"\$1\" \"$store/$lambdasf.txt\"
 }
 
 $params() {
-    grep \"\$1\" \"$store/$paramsf.txt\"
+    grep -i \"\$1\" \"$store/$paramsf.txt\"
 }
 
 $get_param() {
@@ -36,11 +36,15 @@ $get_param() {
 }
 
 $dns() {
-    grep \"\$1\" \"$store/$dnsf.txt\"
+    grep -i \"\$1\" \"$store/$dnsf.txt\"
 }
 
 $lb() {
-    grep \"\$1\" \"$store/$lbf.txt\"
+    grep -i \"\$1\" \"$store/$lbf.txt\"
+}
+
+$cf() {
+    grep -i \"\$1\" \"$store/$cff.txt\"
 }
 
 awss() {

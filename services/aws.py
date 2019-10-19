@@ -33,7 +33,7 @@ def ec2():
     response = client.describe_instances()
     instances_info_list, max_len = append_ec2(response, instances_info_list, 0)
 
-    if response.get('NextToken', None):
+    while response.get('NextToken', None):
         response = client.describe_instances(NextToken=response['NextToken'])
         instances_info_list, max_len = append_ec2(response, instances_info_list, max_len)
 
@@ -226,3 +226,64 @@ def load_balancers():
         all_lb_info += lb_info + "\n"
 
     return all_lb_info
+
+
+def append_cloud_fronts(response, all_cfs_list, max_aliases_len):
+    client = boto3.client('cloudfront')
+    for item in response['DistributionList']['Items']:
+        distribution = client.get_distribution(Id=item['Id'])['Distribution']
+        distribution_config = distribution['DistributionConfig']
+        distribution_origins = distribution_config['Origins']
+
+        origins_id = {}
+
+        for i in range(distribution_origins['Quantity']):
+            origin_item = distribution_origins['Items'][i]
+            origins_id[origin_item['Id']] = origin_item['DomainName'] + origin_item['OriginPath']
+
+        paths = []
+        default_cache_behaviour = distribution_config['DefaultCacheBehavior']
+        paths.append("*" + "-->" + origins_id[default_cache_behaviour['TargetOriginId']])
+
+        other_cache_behaviour = distribution_config['CacheBehaviors']
+
+        for j in range(other_cache_behaviour['Quantity']):
+            behaviour_item = other_cache_behaviour['Items'][j]
+            path_pattern = behaviour_item['PathPattern']
+            if path_pattern[0] == '/':
+                routed_path = origins_id[behaviour_item['TargetOriginId']] + path_pattern
+            else:
+                routed_path = origins_id[behaviour_item['TargetOriginId']] + "/" + path_pattern
+            paths.append(path_pattern + "-->" + routed_path)
+
+        aliases = "-"
+        if distribution.get('AliasICPRecordals', None):
+            aliases = []
+            for cname in distribution['AliasICPRecordals']:
+                aliases.append(cname['CNAME'])
+
+        aliases_str = ','.join(aliases)
+        max_aliases_len = max(max_aliases_len, len(aliases_str))
+        cfs = [distribution['DomainName'], aliases_str, ','.join(paths)]
+        all_cfs_list.append(cfs)
+
+    return all_cfs_list, max_aliases_len
+
+
+def cloud_fronts():
+    client = boto3.client('cloudfront')
+    response = client.list_distributions()
+
+    all_cfs_list = list()
+
+    all_cfs_list, max_aliases_len = append_cloud_fronts(response, all_cfs_list, 0)
+
+    while response['DistributionList'].get('IsTruncated', None):
+        response = client.list_distributions(Marker=response['DistributionList']['NextMarker'])
+        all_cfs_list, max_aliases_len = append_cloud_fronts(response, all_cfs_list, max_aliases_len)
+
+    all_cfs_str = str()
+    for cf in all_cfs_list:
+        all_cfs_str += cf[0].ljust(40)+cf[1].ljust(max_aliases_len+5)+cf[2]+"\n"
+
+    return all_cfs_str.strip()

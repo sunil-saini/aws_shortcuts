@@ -55,7 +55,8 @@ def service_function_mapping(s):
         "lambdas": aws.lambdas,
         "ssm_parameters": aws.ssm_parameters,
         "route53": aws.hosted_zones,
-        "lb": aws.load_balancers
+        "lb": aws.load_balancers,
+        "cloudfront": aws.cloud_fronts
     }
 
     return mapping[s]
@@ -82,9 +83,10 @@ def source_alias_functions(file_to_source):
 
 def services_suffix(service_for):
     suffixes = {
-        "ec2": "instance",
-        "s3": "bucket",
-        "route53": "hosted zones"
+        "ec2": "instances",
+        "s3": "buckets",
+        "route53": "hosted zones",
+        "cloudfront": "distributions"
     }
     return suffixes.get(service_for, None)
 
