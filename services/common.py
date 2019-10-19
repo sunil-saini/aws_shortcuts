@@ -83,8 +83,8 @@ def source_alias_functions(file_to_source):
 
 def services_suffix(service_for):
     suffixes = {
-        "ec2": "instance",
-        "s3": "bucket",
+        "ec2": "instances",
+        "s3": "buckets",
         "route53": "hosted zones",
         "cloudfront": "distributions"
     }
