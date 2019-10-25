@@ -75,6 +75,16 @@ List all load balancers with their port(s), instance(s), target group(s) mapping
     network     testnlb     internet-facing     ['80-->test-tg']    {'test-tg': [i-d21resde-->80, i-d345werds-->80]}
     
 
+List all cloudfront distributions with aliases and configured behaviours
+
+    alcf <any pattern>
+
+    alcf
+
+    a3f4d2uflw1se3.cloudfront.net   my.example.com  *-->my.example.com.s3-website-us-east-1.amazonaws.com
+    ad34d2rclw1w4e.cloudfront.net   web.example.com  *-->web.example.com.s3-website-us-east-1.amazonaws.com
+
+
 List all configured commands at any time
         
     awss 
@@ -85,11 +95,11 @@ Rename any command(s) at any time
 
 Fetch latest data quickly from AWS
 
-    awss update-data
+    awss update
         
 Update Project codebase to latest version for new features
 
-    awss update-project 
+    awss upgrade
 
 
 All list commands support pattern(s), specify the pattern for specific result else all dataset will be returned
