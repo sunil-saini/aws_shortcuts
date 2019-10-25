@@ -103,8 +103,8 @@ def read_project_current_commands():
             print("%s -\t%s" % (description.ljust(35), item[1]))
     print("\n%s -\t%s" % ("List commands".ljust(35), "awss"))
     print("%s -\t%s" % ("Rename commands".ljust(35), "awss configure\n"))
-    print("%s -\t%s" % ("Fetch latest data from AWS".ljust(35), "awss update-data"))
-    print("%s -\t%s" % ("Update project to latest version".ljust(35), "awss update-project\n"))
+    print("%s -\t%s" % ("Fetch latest data from AWS".ljust(35), "awss update"))
+    print("%s -\t%s" % ("Update project to latest version".ljust(35), "awss upgrade\n"))
     print("\n---------------------------------------------------------------------\n")
 
 
