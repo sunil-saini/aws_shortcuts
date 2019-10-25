@@ -53,17 +53,18 @@ case \"\$1\" in
 		python -c \"$import_project;common.configure_project_commands();common.create_alias_functions()\"
 		source "$alias_file"
 		;;
-	"update-data")
+	"update")
 		$project_path/scripts/cron.sh
 		;;
-	"update-project")
+	"upgrade")
 		git clone --quiet https://github.com/sunil-saini/"$project".git "$store/temp" >/dev/null
-		cp -r "$store/temp"/{resources/*.json,scripts,services,requirements.txt,awss.py} $project_path
+		cp $project_path/resources/commands.properties $project_path/resources/commands.properties.bak
+		cp -r "$store/temp"/{resources,scripts,services,requirements.txt,awss.py} $project_path
 		rm -rf "$store/temp"
 		python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
-		python -c \"$import_project;common.create_alias_functions()\"
+		python -c \"$import_project;common.merge_properties_file();common.create_alias_functions()\"
 		source "$alias_file"
-		awss update-data
+		awss update
 		awss
 		;;
 	*)

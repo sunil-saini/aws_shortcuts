@@ -165,3 +165,24 @@ def create_alias_functions():
     cmd = aliases_sh + " " + params_to_pass
     logger.info("command - %s" % cmd)
     os.system(cmd)
+
+
+def merge_properties_file():
+    new_parser = properties_config_parser()
+    old_prop_file_path = host['resources']+"commands.properties.bak"
+    old_parser = RawConfigParser()
+    old_parser.read(old_prop_file_path)
+
+    current_parser = RawConfigParser()
+
+    for sec in new_parser.sections():
+        current_parser.add_section(sec)
+        for key, value in new_parser.items(sec):
+            if old_parser.has_option(sec, key):
+                current_parser.set(sec, key, old_parser[sec].get(key))
+            else:
+                current_parser.set(sec, key, value)
+
+    properties_file = host['resources'] + "commands.properties"
+    with open(properties_file, 'w') as configfile:
+        current_parser.write(configfile)
