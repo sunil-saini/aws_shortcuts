@@ -3,7 +3,7 @@
 
 read -r project ec2 ec2f s3 s3f lambdas lambdasf params paramsf<<< $(echo $1 $2 $3 $4 $5 $6 $7 $8 $9)
 shift 9
-read -r get_param dns dnsf lb lbf cf cff<<< $(echo $1 $2 $3 $4 $5 $6 $7)
+read -r get_param dns dnsf get_domain lb lbf cf cff<<< $(echo $1 $2 $3 $4 $5 $6 $7 $8)
 
 store="$HOME/.$project"
 project_path="$store/$project"
@@ -38,6 +38,14 @@ $get_param() {
 $dns() {
     grep -i \"\$1\" \"$store/$dnsf.txt\"
 }
+
+$get_domain() {
+    if [ ! -z \"\$1\" ]
+    then
+         python -c \"$import_project; common.get_domain('\$1')\"
+    fi
+}
+
 
 $lb() {
     grep -i \"\$1\" \"$store/$lbf.txt\"
