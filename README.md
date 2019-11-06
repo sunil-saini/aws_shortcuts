@@ -85,6 +85,19 @@ List all cloudfront distributions with aliases and configured behaviours
     ad34d2rclw1w4e.cloudfront.net   web.example.com  *-->web.example.com.s3-website-us-east-1.amazonaws.com
 
 
+Get the traceroute path of a domain inside AWS
+
+    agd <domain>
+
+    agd my.example.com
+
+    Domain pointing to --> a3f4d2uflw1se3.cloudfront.net
+
+    Searching in cloudfront for a3f4d2uflw1se3.cloudfront.net
+    cloudfront details:
+    a3f4d2uflw1se3.cloudfront.net   my.example.com  *-->my.example.com.s3-website-us-east-1.amazonaws.com
+
+
 List all configured commands at any time
         
     awss 

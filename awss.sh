@@ -66,7 +66,7 @@ if python "$project_path/awss.py"; then
     fi
     rm current_cron
     source "$alias_file"
-    echo "Project set successfully, Open new terminal tab and enjoy the shortcut commands"
+    echo "Project set successfully, Run default set commands and enjoy shorthand commands"
 else
     echo "Error(s) in setting the project, please fix above mentioned error and run again"
 fi
