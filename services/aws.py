@@ -1,4 +1,5 @@
 import boto3
+from services.host import host_data
 
 
 def append_ec2(response, instances_info_list, max_len):
@@ -182,11 +183,19 @@ def load_balancers():
     elb_list = elb_client.describe_load_balancers()
     elbv2_list = elbv2_client.describe_load_balancers()
 
-    all_lb_info = str()
+    all_lb_info_list = list()
+
+    lb_name_dns_mapping = str()
+
+    max_lb_name_len = 0
+    max_port_mapping_len = 0
 
     for elb in elb_list['LoadBalancerDescriptions']:
         listener_descriptions = elb['ListenerDescriptions']
         instances_list = elb['Instances']
+        lb_name = elb['LoadBalancerName']
+        max_lb_name_len = max(len(lb_name), max_lb_name_len)
+        lb_dns_name = elb['DNSName']
         port_mapping = []
         instances = []
         for ld in listener_descriptions:
@@ -197,11 +206,18 @@ def load_balancers():
         for ins in instances_list:
             instances.append(ins['InstanceId'])
 
-        lb_info = '\t'.join(['classic', elb['LoadBalancerName'], elb['Scheme'], str(port_mapping), str(instances)])
-        all_lb_info += lb_info + "\n"
+        lb_name_dns_mapping += lb_name+"\t"+lb_dns_name+"\n"
+
+        port_mapping_str = ' '.join(port_mapping)
+        max_port_mapping_len = max(len(port_mapping_str), max_port_mapping_len)
+
+        all_lb_info_list.append(['classic', lb_name, elb['Scheme'], port_mapping_str, str(instances)])
 
     for elb in elbv2_list['LoadBalancers']:
         listener_descriptions = elbv2_client.describe_listeners(LoadBalancerArn=elb['LoadBalancerArn'])
+        lb_name = elb['LoadBalancerName']
+        max_lb_name_len = max(len(lb_name), max_lb_name_len)
+        lb_dns_name = elb['DNSName']
         port_mapping = []
         tgs = []
         for listener in listener_descriptions['Listeners']:
@@ -222,10 +238,23 @@ def load_balancers():
                 tg_mapping.append(thd['Target']['Id'] + "-->" + str(thd['Target']['Port']))
             all_tgs[tg.split("/")[-2]] = tg_mapping
 
-        lb_info = '\t'.join([elb['Type'], elb['LoadBalancerName'], elb['Scheme'], str(port_mapping), str(all_tgs)])
-        all_lb_info += lb_info + "\n"
+        lb_name_dns_mapping += lb_name + "\t" + lb_dns_name + "\n"
 
-    return all_lb_info
+        port_mapping_str = ' '.join(port_mapping)
+        max_port_mapping_len = max(len(port_mapping_str), max_port_mapping_len)
+        all_lb_info_list.append([elb['Type'], lb_name, elb['Scheme'], port_mapping_str, str(all_tgs)])
+
+    host = host_data()
+    filename = host['store']+"lb_name_dns_mapping.txt"
+    fp = open(filename, 'w')
+    fp.write(lb_name_dns_mapping)
+    fp.close()
+
+    all_lb_info = str()
+    for row in all_lb_info_list:
+        all_lb_info += row[0].ljust(16)+row[1].ljust(max_lb_name_len+5)+row[2].ljust(20)+row[3].ljust(max_port_mapping_len+5)+row[4] + "\n"
+
+    return all_lb_info.strip()
 
 
 def append_cloud_fronts(response, all_cfs_list, max_aliases_len):
