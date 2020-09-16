@@ -93,14 +93,16 @@ mysqlCommands() {
 
   if [[ \"\$temp_sql_pass_1\" == \"\$temp_sql_pass_2\" ]]; then
     security add-generic-password -a \$USER -s \"by_awss@\$temp_sql_cmd--\$temp_sql_host\" -w \"\$temp_sql_pass_1\"
-    mysql_alias_file_path=\"\$HOME/.aws_shortcuts/.mysqlaliases"
+    mysql_alias_file_path=\"\$HOME/.aws_shortcuts/.mysqlaliases\"
 
+    echo \"\"\"
 \$temp_sql_cmd() {
-                    mysql -h \"\$temp_sql_host\" -u \"\$temp_sql_user\" -p\$(security find-generic-password -a \$USER -s \"by_awss@\$temp_sql_cmd--\$temp_sql_host\" -w)
-    }
-    \>> \"\$mysql_alias_file_path\"
+  mysql -h \"\$temp_sql_host\" -u \"\$temp_sql_user\" -p\\\$(security find-generic-password -a \\\$USER -s \"by_awss@\$temp_sql_cmd--\$temp_sql_host\" -w)
+}
+\"\"\" >> \"\$mysql_alias_file_path\"
+
     echo
-    echo \"command $temp_sql_cmd added successfully\"
+    echo \"command \$temp_sql_cmd added successfully\"
   else
     echo
     echo \"passwords \$temp_sql_pass_1 & \$temp_sql_pass_2 doesn't match\"
