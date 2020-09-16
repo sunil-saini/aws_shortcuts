@@ -34,6 +34,7 @@ def host_data():
     data['shell'] = get_current_shell()
     data['store'] = data['home'] + "/."+project+"/"
     data['aliases'] = data['store'] + ".aliases"
+    data['mysqlaliases'] = data['store'] + ".mysqlaliases"
     data['project'] = data['store'] + project+"/"
     data['scripts'] = data['project'] + "scripts/"
     data['resources'] = data['project'] + "resources/"

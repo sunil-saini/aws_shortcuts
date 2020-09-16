@@ -55,6 +55,7 @@ def main():
     comm.create_alias_functions()
 
     comm.source_alias_functions(host['aliases'])
+    comm.source_alias_functions(host['mysqlaliases'])
     comm.read_project_current_commands()
 
     logger.info('driver done')
