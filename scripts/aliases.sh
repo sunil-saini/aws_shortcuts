@@ -82,14 +82,14 @@ case \"\$1\" in
 esac
 }
 
-mysqlCommands() {
+mysql_add_commands() {
   echo "Enter host, user, password to add mysql connection alias"
-  read -p "Enter command to set: " temp_sql_cmd
-  read -p "Enter Host: " temp_sql_host
-  read -p "Enter User: " temp_sql_user
-  read -s -p "Enter password: " temp_sql_pass_1
+  read -p \"Enter command to set: \" temp_sql_cmd
+  read -p \"Enter Host: \" temp_sql_host
+  read -p \"Enter User: \" temp_sql_user
+  read -s -p \"Enter password: \" temp_sql_pass_1
   echo
-  read -s -p "Confirm password: " temp_sql_pass_2
+  read -s -p \"Confirm password: \" temp_sql_pass_2
 
   if [[ \"\$temp_sql_pass_1\" == \"\$temp_sql_pass_2\" ]]; then
     security add-generic-password -a \$USER -s \"by_awss@\$temp_sql_cmd--\$temp_sql_host\" -w \"\$temp_sql_pass_1\"
