@@ -56,11 +56,11 @@ printf "\nStarted Collecting data from AWS...\n\n"
 
 if python "$project_path/awss.py"; then
     crontab -l > current_cron
-    cron_line="0 */2 * * * /bin/bash $cron"
+    cron_line="0 */6 * * * /bin/bash $cron"
     if grep -Fxq "$cron_line" current_cron; then
         echo "Cron already set, skipping"
     else
-        echo "0 */2 * * * /bin/bash -l $cron" >> current_cron
+        echo "0 */6 * * * /bin/bash -l $cron" >> current_cron
         crontab current_cron
         echo "Cron set successfully to keep updating local data from AWS periodically"
     fi
