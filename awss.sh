@@ -51,7 +51,7 @@ chmod +x "$cron"
 
 printf "\nInstalling pip dependencies...\n"
 
-python -m ensurepip
+python -m ensurepip --user
 python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
 
 printf "\nStarted Collecting data from AWS...\n\n"
