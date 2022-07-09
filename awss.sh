@@ -49,7 +49,9 @@ cron="$project_path/scripts/cron.sh"
 
 chmod +x "$cron"
 
-printf "\nInstalling pip dependencies..."
+printf "\nInstalling pip dependencies...\n"
+
+python -m ensurepip
 python -m pip install --ignore-installed -q -r "$project_path"/requirements.txt --user
 
 printf "\nStarted Collecting data from AWS...\n\n"
